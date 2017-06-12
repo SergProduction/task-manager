@@ -1,22 +1,13 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
+import {guid} from '../../tools'
 
 const styles = {
   textarea: {
     resize: 'vertical'
   }
 }
-
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4()+s4()+s4()
-}
-
 
 class NewDescription extends React.Component {
   constructor(props){
@@ -30,7 +21,7 @@ class NewDescription extends React.Component {
       this.props.add({title: this.title.value, description: this.description.value, id})
     }
     else if( this.props.todo.crud.type === 'add' && this.props.todo.crud.id){
-      this.props.addUnder({title: this.title.value, description: this.description.value, parent: this.props.todo.crud.id, id})
+      this.props.addChild({title: this.title.value, description: this.description.value, parent: this.props.todo.crud.id, id})
     }
     else if( this.props.todo.crud.type === 'update' ){
       id = this.props.todo.crud.id
@@ -90,9 +81,9 @@ export default connect(
         task: {title, description, id}
       })
     },
-    addUnder: ({title, description, parent, id}) => {
+    addChild: ({title, description, parent, id}) => {
       dispatch({
-        type: 'ADD_UNDER',
+        type: 'ADD_CHILD',
         task: {title, description, parent, id}
       })
     },

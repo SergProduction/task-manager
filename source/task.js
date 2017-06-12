@@ -2,8 +2,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux'
 
-import store from './stores/todo'
-import Task from './organisms/task';
+import store from './stores/task'
+import Task from './components/organisms/task';
 
 render(
   (

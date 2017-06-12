@@ -15,7 +15,6 @@ class Description extends React.Component {
   }
   searchTask(){
     const task = this.props.todo.tasks.filter( task => task.id === this.props.todo.crud.id)[0]
-    console.log(task)
     return(
       <div>
         <div>

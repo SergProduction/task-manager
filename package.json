@@ -1,6 +1,6 @@
 {
-  "name": "front-how_to_cards",
-  "version": "1.0.0",
+  "name": "task-manager",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "bower": "bower",
     "compile": "webpack"
   },
-  "author": "",
+  "author": "serg <ss0sergey@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "react": "^15.5.4",

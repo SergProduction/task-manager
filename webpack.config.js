@@ -5,7 +5,7 @@ const webpack = require('webpack');
 module.exports = {
   context: __dirname,
   entry: {
-    todo: './source/todo',
+    task: './source/task',
   },
   output: {
     path: __dirname + '/public/js',

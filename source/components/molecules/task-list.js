@@ -2,6 +2,8 @@ import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 
+import {initLevel} from '../../tools'
+
 const styles = {
   rightLabel: {
     float: 'right',
@@ -14,8 +16,17 @@ const styles = {
   },
   cursor:{
     cursor: 'pointer'
+  },
+  child: {
+    borderLeftWidth: 1,
+    marginLeft: 15
   }
 }
+
+let child = (lvl) => ({
+  borderLeftWidth: lvl ? '1px' : 0,
+  marginLeft: (20 * lvl) + 'px'
+})
 
 class TaskList extends React.Component {
   constructor(props) {
@@ -26,6 +37,13 @@ class TaskList extends React.Component {
     this.remove  = this.remove.bind(this)
     this.update = this.update.bind(this)
     this.addUnder  = this.addUnder.bind(this)
+    this.state = {tasks:[]}
+  }
+  componentWillMount(){
+    this.state.tasks = this.props.tasks.map( (task, i, tasks) => Object.assign(task, {lvl: initLevel(tasks, task)}) )
+  }
+  componentWillReceiveProps(nextProps){
+    this.state.tasks = nextProps.tasks.map( (task, i, tasks) => Object.assign(task, {lvl: initLevel(tasks, task)}) )    
   }
   add(){
     return (e) => {
@@ -53,9 +71,9 @@ class TaskList extends React.Component {
     }
   }
   list(){
-    return this.props.tasks.map( (task,i) => {
+    return this.state.tasks.map( (task,i) => {
       return (
-        <li className="list-group-item" key={i}>
+        <li className="list-group-item" key={i} style={child(task.lvl)}>
           
           <a onClick={this.read(task.id)} className={this.props.classes.cursor}>{task.title}</a>
 

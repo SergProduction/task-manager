@@ -8,15 +8,15 @@ const taskStore = (state, action) => {
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
 
-    case 'ADD_UNDER':
-      var newTask = Object.assign({}, action.task)
-      state.tasks.push(newTask)
+    case 'ADD_CHILD':
+      var i = state.tasks.findIndex( task => task.id == action.task.parent ) + 1
+      
+      state.tasks.splice(i, 0, action.task)
       
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
     
     case 'UPDATE':
-      console.log(action)
       state.tasks = state.tasks.map(task => {
         if(task.id === action.task.id){
           task.title = action.task.title

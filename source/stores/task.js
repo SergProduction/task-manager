@@ -1,15 +1,8 @@
 import { createStore } from 'redux'
 
-import todoStore from '../reducers/todo'
+import todoStore from '../reducers/task'
+import {guid} from '../tools'
 
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4()+s4()+s4()
-}
 
 const store = createStore(todoStore, {
   tasks: [
@@ -17,19 +10,19 @@ const store = createStore(todoStore, {
       title:'test1',
       description: 'des Test1',
       id: guid(),
-      children : []
+      parent: 0
     },
     {
       title:'test2',
       description: 'des Test2',
       id: guid(),
-      children : []
+      parent: 0
     },
     {
       title:'test3',
       description: 'des Test3',
       id: guid(),
-      children : []
+      parent: 0
     }
   ],
   crud: {
