@@ -1,7 +1,9 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
+import {markdown} from 'markdown'
 
+console.log(markdown )
 const styles = {
   textarea: {
     resize: 'vertical'
@@ -13,18 +15,20 @@ class Description extends React.Component {
     super(props)
     this.searchTask = this.searchTask.bind(this)
   }
+  markdownToHtml(text){
+    let html = { __html: markdown.toHTML(text) }
+    return html
+  }
   searchTask(){
     const task = this.props.todo.tasks.filter( task => task.id === this.props.todo.crud.id)[0]
     return(
       <div>
         <div>
-          <h4>title</h4>
-          {task.title}
+          <h2>{task.title}</h2>
         </div>
         <hr/>
         <div>
-          <h4>description</h4>
-          {task.description}
+          <div dangerouslySetInnerHTML={this.markdownToHtml(task.description)}></div>
         </div>
       </div>
     )
