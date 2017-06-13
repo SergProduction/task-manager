@@ -44,4 +44,9 @@ const time = function( format, oldDate ){ // _format: Y M Dw D h m s
   return format
 };
 
-export { initLevel, guid, time }
+const localStore = {
+  save: (value) => window.localStorage.setItem('taskManager', JSON.stringify(value)) ,
+  get: () => JSON.parse( window.localStorage.getItem('taskManager') )
+}
+
+export { initLevel, guid, time, localStore }

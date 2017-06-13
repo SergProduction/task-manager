@@ -1,27 +1,13 @@
 import { createStore } from 'redux'
 
 import todoStore from '../reducers/task'
-import {guid} from '../tools'
+import {guid, localStore} from '../tools'
 
-const testData = {
+const testData = localStore.get() || {
   tasks: [
     {
-      title:'test1',
-      description: 'des Test1',
-      createDate: +new Date(),
-      id: guid(),
-      parent: 0
-    },
-    {
-      title:'test2',
-      description: 'des Test2',
-      createDate: +new Date(),
-      id: guid(),
-      parent: 0
-    },
-    {
-      title:'test3',
-      description: 'des Test3',
+      title:'Hello!',
+      description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store',
       createDate: +new Date(),
       id: guid(),
       parent: 0
@@ -34,10 +20,11 @@ const testData = {
 }
 
 const store = createStore(todoStore, testData, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__())
-/*
+
 store.subscribe(() => {
+  localStore.save( store.getState() )
   console.log('subscribe', store.getState())
 })
-*/
+
 
 export default store
