@@ -8,23 +8,25 @@ import Description from '../molecules/description'
 
 
 const styles = {
-  marginTop: {
-    marginTop: 50
+  container: {
+    padding: 50
   }
 }
 
 const Task = (props) => {
   return(
-    <div className={"container " + props.classes.marginTop}>
+    <div className={props.classes.container}>
       <div className="row">
-        <div className="col-md-6">
+        <div className="col-md-4">
           <WrapList/>
         </div>
-        <div className="col-md-6">
+        <div className="col-md-8">
           {
             props.watch === 'read'
             ? <Description/>
-            : <NewDescription/>
+            : props.watch === 'update' || props.watch === 'create'
+            ? <NewDescription/>
+            : null
           }
         </div>
       </div>

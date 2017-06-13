@@ -3,24 +3,26 @@ import { createStore } from 'redux'
 import todoStore from '../reducers/task'
 import {guid} from '../tools'
 
-
-const store = createStore(todoStore, {
+const testData = {
   tasks: [
     {
       title:'test1',
       description: 'des Test1',
+      createDate: +new Date(),
       id: guid(),
       parent: 0
     },
     {
       title:'test2',
       description: 'des Test2',
+      createDate: +new Date(),
       id: guid(),
       parent: 0
     },
     {
       title:'test3',
       description: 'des Test3',
+      createDate: +new Date(),
       id: guid(),
       parent: 0
     }
@@ -29,7 +31,9 @@ const store = createStore(todoStore, {
     type: false,
     id: false
   }
-}, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__())
+}
+
+const store = createStore(todoStore, testData, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__())
 /*
 store.subscribe(() => {
   console.log('subscribe', store.getState())

@@ -30,7 +30,7 @@ const taskStore = (state, action) => {
       state.tasks = state.tasks.filter(task => task.id !== action.id)
       return Object.assign({}, state)
 
-    case 'ACTIVE':
+    case 'CRUD':
       state.crud.type = action.state
       state.crud.id = action.id ? action.id : false
       

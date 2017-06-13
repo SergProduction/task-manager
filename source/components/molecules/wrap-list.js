@@ -26,22 +26,19 @@ class WrapList extends React.Component {
   }
   add(){
     return (e) => {
-      this.props.active({state: 'add', id: false})
+      this.props.crud({state: 'create', id: false})
     }
   }
   render(){
     return(
       <div className="panel panel-default">
         <div className="panel-heading">
-          лист задач
+          Task list
           <div className={this.props.classes.rightLabel}>
             <i className="glyphicon glyphicon-plus" style={{color:'#080'}} onClick={this.add()}></i>
           </div>
         </div>
-        <div className="panel-body">
-          <p>Описание листа задач</p>
-        </div>
-          <TaskList/>
+        <TaskList/>
       </div>
     )
   }
@@ -50,9 +47,9 @@ class WrapList extends React.Component {
 export default connect(
   state => ({tasks: state.tasks}),
   dispatch => ({
-    active: ({state, id}) => {
+    crud: ({state, id}) => {
       dispatch({
-        type: 'ACTIVE',
+        type: 'CRUD',
         state: state,
         id: id
       })

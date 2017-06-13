@@ -1,16 +1,14 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
-
+import {CRUD, REMOVE} from '../../actions'
 import {initLevel} from '../../tools'
 
 const styles = {
   rightLabel: {
     float: 'right',
     '& > *': {
-      marginLeft: 5
-    },
-    '&:hover': {
+      marginLeft: 5,
       cursor: 'pointer'
     }
   },
@@ -47,27 +45,28 @@ class TaskList extends React.Component {
   }
   add(){
     return (e) => {
-      this.props.active({state: 'add', id: false})
+      this.props.crud({state: 'create', id: false})
     }
   }
   read(id) {
     return (e) => {
-      this.props.active({state: 'read', id})
+      this.props.crud({state: 'read', id})
     }
   }
   remove(id){
     return (e) => {
       this.props.remove(id)
+      this.props.crud({state: 'remove', id})
     }
   }
   update(id){
     return (e) => {
-      this.props.active({state: 'update', id})
+      this.props.crud({state: 'update', id})
     }
   }
   addUnder(id){
     return (e) => {
-      this.props.active({state: 'add', id})
+      this.props.crud({state: 'create', id})
     }
   }
   list(){
@@ -99,19 +98,8 @@ class TaskList extends React.Component {
 export default connect(
   state => ({tasks: state.tasks}),
   dispatch => ({
-    active: ({state, id}) => {
-      dispatch({
-        type: 'ACTIVE',
-        state: state,
-        id: id
-      })
-    },
-    remove: (id) => {
-      dispatch({
-        type: 'REMOVE',
-        id: id
-      })
-    }
+    crud: CRUD(dispatch),
+    remove: REMOVE(dispatch)
   })
 )(
   injectSheet(styles)(TaskList)

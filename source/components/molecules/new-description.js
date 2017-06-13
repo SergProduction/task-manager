@@ -2,6 +2,8 @@ import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 import {guid} from '../../tools'
+import {CRUD, ADD, ADD_CHILD, UPDATE} from '../../actions'
+
 
 const styles = {
   textarea: {
@@ -17,17 +19,17 @@ class NewDescription extends React.Component {
   }
   save(){
     let id = guid()
-    if( this.props.todo.crud.type === 'add' && !this.props.todo.crud.id){
+    if( this.props.todo.crud.type === 'create' && !this.props.todo.crud.id){
       this.props.add({title: this.title.value, description: this.description.value, id})
     }
-    else if( this.props.todo.crud.type === 'add' && this.props.todo.crud.id){
+    else if( this.props.todo.crud.type === 'create' && this.props.todo.crud.id){
       this.props.addChild({title: this.title.value, description: this.description.value, parent: this.props.todo.crud.id, id})
     }
     else if( this.props.todo.crud.type === 'update' ){
       id = this.props.todo.crud.id
       this.props.update({title: this.title.value, description: this.description.value, id})
     }
-    this.props.active({state: 'read', id})
+    this.props.crud({state: 'read', id})
   }
   componentWillReceiveProps(nextProps){
     if( nextProps.todo.crud.type === 'update' ){
@@ -68,31 +70,10 @@ class NewDescription extends React.Component {
 export default connect(
   state => ({todo: state}),
   dispatch => ({
-    active: ({state, id}) => {
-      dispatch({
-        type: 'ACTIVE',
-        state: state,
-        id: id
-      })
-    },
-    add: ({title, description, id}) => {
-      dispatch({
-        type: 'ADD',
-        task: {title, description, id}
-      })
-    },
-    addChild: ({title, description, parent, id}) => {
-      dispatch({
-        type: 'ADD_CHILD',
-        task: {title, description, parent, id}
-      })
-    },
-    update: ({title, description, id}) => {
-      dispatch({
-        type: 'UPDATE',
-        task: {title, description, id}
-      })
-    }
+    crud: CRUD(dispatch),
+    add: ADD(dispatch),
+    addChild: ADD_CHILD(dispatch),
+    update: UPDATE(dispatch)
   })
 )(
   injectSheet(styles)(NewDescription)
