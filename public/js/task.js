@@ -3724,27 +3724,6 @@ var guid = function guid() {
   return s4() + s4() + s4();
 };
 
-var time = function time(format, oldDate) {
-  // _format: Y M Dw D h m s
-  var date = oldDate ? new Date(oldDate) : new Date();
-  var tmp = {
-    "~Y~": date.getFullYear(), //год в формате (****)
-    "~M~": date.getMonth() + 1, //месяц, от 0 до 11
-    "~D~": date.getDate(), // число месяца, от 1 до 31
-    "~Dw~": date.getDay(), // номер дня в неделе 0-воскресенье, 6-суббота
-    "~h~": date.getHours(),
-    "~m~": date.getMinutes(),
-    "~s~": date.getSeconds()
-  };
-  Object.keys(tmp).forEach(function (key) {
-    if (String(tmp[key]).length == 1) tmp[key] = 0 + String(tmp[key]);
-  });
-  Object.keys(tmp).forEach(function (key) {
-    format = format.replace(key, tmp[key]);
-  });
-  return format;
-};
-
 var localStore = {
   save: function save(value) {
     return window.localStorage.setItem('taskManager', JSON.stringify(value));
@@ -3756,7 +3735,6 @@ var localStore = {
 
 exports.initLevel = initLevel;
 exports.guid = guid;
-exports.time = time;
 exports.localStore = localStore;
 
 /***/ }),
@@ -12201,7 +12179,13 @@ var _reactRedux = __webpack_require__(18);
 
 var _markdown = __webpack_require__(177);
 
-var _tools = __webpack_require__(30);
+var _controlPanel = __webpack_require__(289);
+
+var _controlPanel2 = _interopRequireDefault(_controlPanel);
+
+var _dateTemplate = __webpack_require__(290);
+
+var _dateTemplate2 = _interopRequireDefault(_dateTemplate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12224,82 +12208,16 @@ var styles = {
   }
 };
 
-var TaskControl = function (_React$Component) {
-  _inherits(TaskControl, _React$Component);
-
-  function TaskControl(props) {
-    _classCallCheck(this, TaskControl);
-
-    var _this = _possibleConstructorReturn(this, (TaskControl.__proto__ || Object.getPrototypeOf(TaskControl)).call(this, props));
-
-    _this.stateTaskOpen = _this.stateTaskOpen.bind(_this);
-    _this.stateTaskClose = _this.stateTaskClose.bind(_this);
-    return _this;
-  }
-
-  _createClass(TaskControl, [{
-    key: 'stateTaskOpen',
-    value: function stateTaskOpen(e) {
-      e.preventDefault();
-      console.log('stateTaskOpen');
-    }
-  }, {
-    key: 'stateTaskClose',
-    value: function stateTaskClose(e) {
-      e.preventDefault();
-      console.log('stateTaskClose');
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        { className: 'dropdown pull-right' },
-        _react2.default.createElement(
-          'button',
-          { className: 'btn btn-default dropdown-toggle', type: 'button', id: 'dropdownMenu1', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'true' },
-          'state',
-          _react2.default.createElement('span', { className: 'caret' })
-        ),
-        _react2.default.createElement(
-          'ul',
-          { className: 'dropdown-menu', 'aria-labelledby': 'dropdownMenu1' },
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'a',
-              { onClick: this.stateTaskOpen },
-              'Open'
-            )
-          ),
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'a',
-              { onClick: this.stateTaskClose },
-              'Close'
-            )
-          )
-        )
-      );
-    }
-  }]);
-
-  return TaskControl;
-}(_react2.default.Component);
-
-var Description = function (_React$Component2) {
-  _inherits(Description, _React$Component2);
+var Description = function (_React$Component) {
+  _inherits(Description, _React$Component);
 
   function Description(props) {
     _classCallCheck(this, Description);
 
-    var _this2 = _possibleConstructorReturn(this, (Description.__proto__ || Object.getPrototypeOf(Description)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Description.__proto__ || Object.getPrototypeOf(Description)).call(this, props));
 
-    _this2.searchTask = _this2.searchTask.bind(_this2);
-    return _this2;
+    _this.searchTask = _this.searchTask.bind(_this);
+    return _this;
   }
 
   _createClass(Description, [{
@@ -12311,10 +12229,10 @@ var Description = function (_React$Component2) {
   }, {
     key: 'searchTask',
     value: function searchTask() {
-      var _this3 = this;
+      var _this2 = this;
 
       var task = this.props.todo.tasks.filter(function (task) {
-        return task.id === _this3.props.todo.crud.id;
+        return task.id === _this2.props.todo.crud.id;
       })[0];
       return _react2.default.createElement(
         'div',
@@ -12337,7 +12255,7 @@ var Description = function (_React$Component2) {
         _react2.default.createElement(
           'div',
           { className: 'text-info text-right' },
-          (0, _tools.time)('~h~:~m~ ~D~.~M~.~Y~', task.createDate)
+          (0, _dateTemplate2.default)('~h~:~m~ ~D~.~M~.~Y~', task.createDate)
         )
       );
     }
@@ -12361,11 +12279,7 @@ var Description = function (_React$Component2) {
             _react2.default.createElement(
               'div',
               { className: 'col-md-6' },
-              _react2.default.createElement(
-                'div',
-                { className: 'pull-right' },
-                _react2.default.createElement(TaskControl, null)
-              )
+              _react2.default.createElement(_controlPanel2.default, { id: this.props.todo.crud.id })
             )
           )
         ),
@@ -12611,11 +12525,7 @@ var TaskList = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (TaskList.__proto__ || Object.getPrototypeOf(TaskList)).call(this, props));
 
     _this.list = _this.list.bind(_this);
-    _this.add = _this.add.bind(_this);
     _this.read = _this.read.bind(_this);
-    _this.remove = _this.remove.bind(_this);
-    _this.update = _this.update.bind(_this);
-    _this.addUnder = _this.addUnder.bind(_this);
     _this.state = { tasks: [] };
     return _this;
   }
@@ -12635,55 +12545,18 @@ var TaskList = function (_React$Component) {
       });
     }
   }, {
-    key: 'add',
-    value: function add() {
+    key: 'read',
+    value: function read(id) {
       var _this2 = this;
 
       return function (e) {
-        _this2.props.crud({ state: 'create', id: false });
-      };
-    }
-  }, {
-    key: 'read',
-    value: function read(id) {
-      var _this3 = this;
-
-      return function (e) {
-        _this3.props.crud({ state: 'read', id: id });
-      };
-    }
-  }, {
-    key: 'remove',
-    value: function remove(id) {
-      var _this4 = this;
-
-      return function (e) {
-        _this4.props.remove(id);
-        _this4.props.crud({ state: 'remove', id: id });
-      };
-    }
-  }, {
-    key: 'update',
-    value: function update(id) {
-      var _this5 = this;
-
-      return function (e) {
-        _this5.props.crud({ state: 'update', id: id });
-      };
-    }
-  }, {
-    key: 'addUnder',
-    value: function addUnder(id) {
-      var _this6 = this;
-
-      return function (e) {
-        _this6.props.crud({ state: 'create', id: id });
+        _this2.props.crud({ state: 'read', id: id });
       };
     }
   }, {
     key: 'list',
     value: function list() {
-      var _this7 = this;
+      var _this3 = this;
 
       return this.state.tasks.map(function (task, i) {
         return _react2.default.createElement(
@@ -12691,15 +12564,12 @@ var TaskList = function (_React$Component) {
           { className: 'list-group-item', key: i, style: child(task.lvl) },
           _react2.default.createElement(
             'a',
-            { onClick: _this7.read(task.id), className: _this7.props.classes.cursor },
+            { onClick: _this3.read(task.id), className: _this3.props.classes.cursor },
             task.title
           ),
           _react2.default.createElement(
             'div',
-            { className: _this7.props.classes.rightLabel },
-            _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove', style: { color: '#800' }, onClick: _this7.remove(task.id) }),
-            _react2.default.createElement('i', { className: 'glyphicon glyphicon-pencil', style: { color: '#008' }, onClick: _this7.update(task.id) }),
-            _react2.default.createElement('i', { className: 'glyphicon glyphicon-plus', style: { color: '#080' }, onClick: _this7.addUnder(task.id) }),
+            { className: _this3.props.classes.rightLabel },
             _react2.default.createElement(
               'span',
               { className: 'label label-primary' },
@@ -32079,6 +31949,264 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 288 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(10);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactJss = __webpack_require__(29);
+
+var _reactJss2 = _interopRequireDefault(_reactJss);
+
+var _reactRedux = __webpack_require__(18);
+
+var _actions = __webpack_require__(66);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var styles = {
+  marginIcon: {
+    '& > *': {
+      marginRight: 10,
+      cursor: 'pointer'
+    }
+  }
+};
+
+var ControlButton = function (_React$Component) {
+  _inherits(ControlButton, _React$Component);
+
+  function ControlButton(props) {
+    _classCallCheck(this, ControlButton);
+
+    var _this = _possibleConstructorReturn(this, (ControlButton.__proto__ || Object.getPrototypeOf(ControlButton)).call(this, props));
+
+    _this.remove = _this.remove.bind(_this);
+    _this.update = _this.update.bind(_this);
+    _this.addUnder = _this.addUnder.bind(_this);
+    return _this;
+  }
+
+  _createClass(ControlButton, [{
+    key: 'remove',
+    value: function remove(id) {
+      var _this2 = this;
+
+      return function (e) {
+        _this2.props.remove(id);
+        _this2.props.crud({ state: 'remove', id: id });
+      };
+    }
+  }, {
+    key: 'update',
+    value: function update(id) {
+      var _this3 = this;
+
+      return function (e) {
+        _this3.props.crud({ state: 'update', id: id });
+      };
+    }
+  }, {
+    key: 'addUnder',
+    value: function addUnder(id) {
+      var _this4 = this;
+
+      return function (e) {
+        _this4.props.crud({ state: 'create', id: id });
+      };
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var id = this.props.id;
+
+      return _react2.default.createElement(
+        'div',
+        { className: this.props.classes.marginIcon },
+        _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove', style: { color: '#800' }, onClick: this.remove(id) }),
+        _react2.default.createElement('i', { className: 'glyphicon glyphicon-pencil', style: { color: '#008' }, onClick: this.update(id) }),
+        _react2.default.createElement('i', { className: 'glyphicon glyphicon-plus', style: { color: '#080' }, onClick: this.addUnder(id) })
+      );
+    }
+  }]);
+
+  return ControlButton;
+}(_react2.default.Component);
+
+exports.default = (0, _reactRedux.connect)(function (state) {
+  return { id: state.crud.id };
+}, function (dispatch) {
+  return {
+    crud: (0, _actions.CRUD)(dispatch),
+    remove: (0, _actions.REMOVE)(dispatch)
+  };
+})((0, _reactJss2.default)(styles)(ControlButton));
+
+/***/ }),
+/* 289 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(10);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactJss = __webpack_require__(29);
+
+var _reactJss2 = _interopRequireDefault(_reactJss);
+
+var _controlButton = __webpack_require__(288);
+
+var _controlButton2 = _interopRequireDefault(_controlButton);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var styles = {
+  inlineChilds: {
+    '& > *': {
+      display: 'inline-block'
+    }
+  }
+};
+
+var ControlPanel = function (_React$Component) {
+  _inherits(ControlPanel, _React$Component);
+
+  function ControlPanel(props) {
+    _classCallCheck(this, ControlPanel);
+
+    var _this = _possibleConstructorReturn(this, (ControlPanel.__proto__ || Object.getPrototypeOf(ControlPanel)).call(this, props));
+
+    _this.stateTaskOpen = _this.stateTaskOpen.bind(_this);
+    _this.stateTaskClose = _this.stateTaskClose.bind(_this);
+    return _this;
+  }
+
+  _createClass(ControlPanel, [{
+    key: 'stateTaskOpen',
+    value: function stateTaskOpen(e) {
+      e.preventDefault();
+      console.log('stateTaskOpen');
+    }
+  }, {
+    key: 'stateTaskClose',
+    value: function stateTaskClose(e) {
+      e.preventDefault();
+      console.log('stateTaskClose');
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { className: "pull-right " + this.props.classes.inlineChilds },
+        _react2.default.createElement(_controlButton2.default, null),
+        _react2.default.createElement(
+          'div',
+          { className: 'dropdown' },
+          _react2.default.createElement(
+            'button',
+            { className: 'btn btn-default dropdown-toggle', type: 'button', id: 'dropdownMenu1', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'true' },
+            'state',
+            _react2.default.createElement('span', { className: 'caret' })
+          ),
+          _react2.default.createElement(
+            'ul',
+            { className: 'dropdown-menu pull-right', 'aria-labelledby': 'dropdownMenu1' },
+            _react2.default.createElement(
+              'li',
+              null,
+              _react2.default.createElement(
+                'a',
+                { onClick: this.stateTaskOpen },
+                'Open'
+              )
+            ),
+            _react2.default.createElement(
+              'li',
+              null,
+              _react2.default.createElement(
+                'a',
+                { onClick: this.stateTaskClose },
+                'Close'
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return ControlPanel;
+}(_react2.default.Component);
+
+exports.default = (0, _reactJss2.default)(styles)(ControlPanel);
+
+/***/ }),
+/* 290 */
+/***/ (function(module, exports) {
+
+/**
+*@function
+*@name dateTemplate
+*@param {string} format - ~Y~ ~M~ ~Dw~ ~D~ ~h~ ~m~ ~s~
+*@param {number} oldDate - unix time OR Date object
+*/
+const dateTemplate = function( format, oldDate, middleware ){ 
+  let date = oldDate ? new Date(oldDate) : new Date();
+  let tmp = {
+    "~Y~": date.getFullYear(),   //Year ****
+    "~M~": date.getMonth() + 1,  //Month, from 01 to 12
+    "~D~": date.getDate(),       //Day, from 01 to 31
+    "~Dw~": date.getDay(),       //Day of the week 0-sunday, 6-saturday
+    "~h~": date.getHours(),      //hourse
+    "~m~": date.getMinutes(),    //minutes
+    "~s~": date.getSeconds(),    //seconds
+    "~mm~": date.getMilliseconds //milliseconds
+  };
+  tmp = middleware ? middleware(tmp) : tmp
+  Object.keys(tmp).forEach( key => {
+    if( String(tmp[key]).length == 1 )
+      tmp[key] = 0 + String(tmp[key])
+    format = format.replace( key, tmp[key] )
+  })
+  return format
+};
+
+module.exports  = dateTemplate
 
 /***/ })
 /******/ ]);

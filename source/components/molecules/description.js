@@ -2,7 +2,9 @@ import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 import {markdown} from 'markdown'
-import {time} from '../../tools'
+
+import ControlPanel from '../atoms/control-panel'
+import dateTemplate from 'date-template'
 
 
 const styles = {
@@ -17,36 +19,6 @@ const styles = {
     }
   }
 }
-
-class TaskControl extends React.Component{
-  constructor(props){
-    super(props)
-    this.stateTaskOpen = this.stateTaskOpen.bind(this)
-    this.stateTaskClose = this.stateTaskClose.bind(this)
-  }
-  stateTaskOpen(e){
-    e.preventDefault();
-    console.log('stateTaskOpen')
-  }
-  stateTaskClose(e){
-    e.preventDefault();
-    console.log('stateTaskClose')
-  }
-  render(){
-    return (
-      <div className="dropdown pull-right">
-        <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          state 
-          <span className="caret"></span>
-        </button>
-        <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-          <li><a onClick={this.stateTaskOpen}>Open</a></li>
-          <li><a onClick={this.stateTaskClose}>Close</a></li>
-        </ul>
-      </div>
-    )
-  }
-} 
 
 class Description extends React.Component {
   constructor(props){
@@ -69,7 +41,7 @@ class Description extends React.Component {
           <div dangerouslySetInnerHTML={this.markdownToHtml(task.description)}></div>
         </div>
         <div className="text-info text-right">
-          {time('~h~:~m~ ~D~.~M~.~Y~', task.createDate)}
+          {dateTemplate('~h~:~m~ ~D~.~M~.~Y~', task.createDate)}
         </div>
       </div>
     )
@@ -83,9 +55,7 @@ class Description extends React.Component {
               Task control
             </div>
             <div className="col-md-6">
-              <div className="pull-right">
-                <TaskControl/>
-              </div>
+              <ControlPanel id={this.props.todo.crud.id}/>
             </div>
           </div>
         </div>
