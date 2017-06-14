@@ -12160,7 +12160,7 @@ var testData = _tools.localStore.get() || {
 var store = (0, _redux.createStore)(_task2.default, testData, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__());
 
 store.subscribe(function () {
-  _tools.localStore.save(store.getState());
+  //localStore.save( store.getState() )
   console.log('subscribe', store.getState());
 });
 
@@ -12865,7 +12865,15 @@ var taskStore = function taskStore(state, action) {
       return Object.assign({}, state);
 
     case 'ADD_CHILD':
-      var i = state.tasks.findIndex(function (task) {
+      var childs = state.tasks.filter(function (task) {
+        return task.parent === action.task.parent;
+      });
+
+      var lastChildId = childs.length ? childs[childs.length - 1].id : false;
+
+      var i = lastChildId ? state.tasks.findIndex(function (task) {
+        return task.id == lastChildId;
+      }) + 1 : state.tasks.findIndex(function (task) {
         return task.id == action.task.parent;
       }) + 1;
 

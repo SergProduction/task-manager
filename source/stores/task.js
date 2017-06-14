@@ -22,7 +22,7 @@ const testData = localStore.get() || {
 const store = createStore(todoStore, testData, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__())
 
 store.subscribe(() => {
-  localStore.save( store.getState() )
+  //localStore.save( store.getState() )
   console.log('subscribe', store.getState())
 })
 

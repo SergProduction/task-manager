@@ -9,8 +9,16 @@ const taskStore = (state, action) => {
       return Object.assign({}, state)
 
     case 'ADD_CHILD':
-      var i = state.tasks.findIndex( task => task.id == action.task.parent ) + 1
+      var childs = state.tasks.filter( task => task.parent === action.task.parent )
       
+      var lastChildId = childs.length
+      ? childs[ childs.length - 1 ].id
+      : false
+
+      var i = lastChildId
+      ? state.tasks.findIndex( task => task.id == lastChildId ) + 1
+      : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
+
       state.tasks.splice(i, 0, action.task)
       
       state.tasks = state.tasks.slice()
