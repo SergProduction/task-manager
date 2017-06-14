@@ -2,7 +2,7 @@
 const taskStore = (state, action) => {
   switch(action.type){
     case 'ADD':
-      var newTask = Object.assign({}, action.task, {parent:false})
+      var newTask = Object.assign({}, action.task, {parent:false, createDate: +new Date()})
       state.tasks.push(newTask)
       
       state.tasks = state.tasks.slice()
@@ -19,7 +19,8 @@ const taskStore = (state, action) => {
       ? state.tasks.findIndex( task => task.id == lastChildId ) + 1
       : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
 
-      state.tasks.splice(i, 0, action.task)
+      var newChildTask = Object.assign({}, action.task, {createDate: +new Date()})
+      state.tasks.splice(i, 0, newChildTask )
       
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
