@@ -1,6 +1,6 @@
 import React from 'react';
 import injectSheet from 'react-jss'
-import ControlButton from './control-button'
+import ControlButton from './control-buttons'
 
 const styles = {
   inlineChilds: {

@@ -17,7 +17,7 @@ class ControlButton extends React.Component {
     super(props);
     this.remove  = this.remove.bind(this)
     this.update = this.update.bind(this)
-    this.addUnder  = this.addUnder.bind(this)
+    this.addChild  = this.addChild.bind(this)
   }
   remove(id){
     return (e) => {
@@ -30,7 +30,7 @@ class ControlButton extends React.Component {
       this.props.crud({state: 'update', id})
     }
   }
-  addUnder(id){
+  addChild(id){
     return (e) => {
       this.props.crud({state: 'create', id})
     }
@@ -39,9 +39,9 @@ class ControlButton extends React.Component {
     let {id} = this.props
     return(
       <div className={this.props.classes.marginIcon}>
-        <i className="glyphicon glyphicon-remove" style={{color:'#800'}} onClick={this.remove(id)}></i>
-        <i className="glyphicon glyphicon-pencil" style={{color:'#008'}} onClick={this.update(id)}></i>
-        <i className="glyphicon glyphicon-plus"   style={{color:'#080'}} onClick={this.addUnder(id)}></i>
+        <i className="glyphicon glyphicon-remove" style={{color:'#800'}} onClick={this.remove(id)}   title="remove"></i>
+        <i className="glyphicon glyphicon-pencil" style={{color:'#008'}} onClick={this.update(id)}   title="update"></i>
+        <i className="glyphicon glyphicon-plus"   style={{color:'#080'}} onClick={this.addChild(id)} title="add child task"></i>
       </div>
     )
   }

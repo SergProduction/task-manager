@@ -1,3 +1,4 @@
+import {getAllChilds, getChilds} from '../tools';
 
 const taskStore = (state, action) => {
   switch(action.type){
@@ -9,20 +10,23 @@ const taskStore = (state, action) => {
       return Object.assign({}, state)
 
     case 'ADD_CHILD':
-      var childs = state.tasks.filter( task => task.parent === action.task.parent )
+      console.log(state.tasks, action.task)
       
-      var lastChildId = childs.length
-      ? childs[ childs.length - 1 ].id
+      var sibling = state.tasks.filter( task => task.parent === action.task.parent )
+      
+      var lastSiblingId = sibling.length
+      ? sibling[ sibling.length - 1 ].id
       : false
 
-      var i = lastChildId
-      ? state.tasks.findIndex( task => task.id == lastChildId ) + 1
+      var i = lastSiblingId
+      ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
       : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
 
       var newChildTask = Object.assign({}, action.task, {createDate: +new Date()})
       state.tasks.splice(i, 0, newChildTask )
       
-      state.tasks = state.tasks.slice()
+
+      state.tasks = tasks.slice()
       return Object.assign({}, state)
     
     case 'UPDATE':
@@ -36,7 +40,13 @@ const taskStore = (state, action) => {
       return Object.assign({}, state)
     
     case 'REMOVE':
-      state.tasks = state.tasks.filter(task => task.id !== action.id)
+      console.log('REMOVE')
+      let task = state.tasks.filter(task => task.id === action.id)[0]
+      
+      let childs = getAllChilds(state.tasks, task).map(child => child.id)
+      childs.push(action.id)
+
+      state.tasks = state.tasks.filter(task => !childs.includes(task.id) )
       return Object.assign({}, state)
 
     case 'CRUD':
