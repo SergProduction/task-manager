@@ -29,7 +29,7 @@ const styles = {
   }
 }
 
-let child = (lvl) => ({
+let expandLvl = (lvl) => ({
   borderLeftWidth: lvl ? '1px' : 0,
   marginLeft: (20 * lvl) + 'px'
 })
@@ -45,15 +45,19 @@ class TaskList extends React.Component {
     this.state = {tasks:[], expand: {}}
   }
   componentWillMount(){
-    let tasks = this.props.tasks.filter( task => !task.parent)
+    const tasks = this.props.tasks.filter( task => !task.parent)
     let expand = {}
+    
     for( task of tasks){
       expand[task.id] = false
     }
+
     this.state = {tasks, expand}
   }
   componentWillReceiveProps(nextProps){
-    this.state.tasks = nextProps.tasks.map( (task, i, tasks) => Object.assign(task, {lvl: initLevel(tasks, task)}) )    
+    const tasksId = this.state.tasks.map( task => task.id)
+    const newTask = this.props.tasks.filter( task => !task.parent && !tasksId.includes(task.id) )
+    this.state.tasks = this.state.tasks.concat(newTask) 
   }
   expandClick(task){
     return this.state.expand[task.id]
@@ -103,14 +107,16 @@ class TaskList extends React.Component {
     }
   }
   expandState(task){
-    let childs = getChilds(this.props.tasks, task)
-    let state = childs.length
-    ? this.state.expand[task.id]
-    ? 'glyphicon-triangle-bottom '
-    : 'glyphicon-triangle-right '
-    : 'glyphicon-menu-right '
-    //let state = this.state.expand[id] ? "glyphicon-minus " : "glyphicon-plus "
-    return "glyphicon " + state + this.props.classes.expand
+    const childs = getChilds(this.props.tasks, task)
+    const state = this.state.expand[task.id]
+      ? 'glyphicon-triangle-bottom '
+      : 'glyphicon-triangle-right '
+    
+    const stateClasses = childs.length
+      ?  state
+      : 'glyphicon-menu-right ' 
+    
+    return `glyphicon ${stateClasses} ${this.props.classes.expand}`
   }
   read(id) {
     return (e) => {
@@ -120,7 +126,7 @@ class TaskList extends React.Component {
   list(){
     return this.state.tasks.map( (task,i) => {
       return (
-        <li className="list-group-item" key={i} style={child(task.lvl)}>
+        <li className="list-group-item" key={i} style={expandLvl(task.lvl)}>
           <i className={this.expandState(task)} onClick={this.expandClick(task)}></i>
           <a onClick={this.read(task.id)} className={this.props.classes.cursor}>{task.title}</a>
           <div className={this.props.classes.rightLabel}>
@@ -141,7 +147,7 @@ class TaskList extends React.Component {
 }
 
 export default connect(
-  state => ({tasks: state.tasks}),
+  state => ({tasks: state.tasks, rcrud: state.crud}),
   dispatch => ({
     crud: CRUD(dispatch),
     remove: REMOVE(dispatch)

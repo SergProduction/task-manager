@@ -17,17 +17,64 @@ class NewDescription extends React.Component {
     this.save = this.save.bind(this)
     this.indetify = this.indetify.bind(this)
   }
+  specialCommand(stringParse, parent){
+    let testString = "#### hello? this is task 3 list children task - /task 'task 3.1' - /task 'task 3.2' /help 'help 3.2"
+    
+    let commands = {
+      task: {
+        start: /\/task "([\w\s.,"]+)"/g,
+        end: /"([\w\s.,"]+)"/,
+        replace: '/task "',
+        middle: false,
+        result: []
+      },
+      help: {
+        start: /\/help/g,
+        end: /(\/help)/,
+        replace: '\/help',
+        middle: false,
+        result: []
+      }
+    }
+    
+    for( let key in commands){
+      commands[key].middle = stringParse.match(commands[key].start)
+      if( commands[key].middle ){
+        for( let mid of commands[key].middle ){
+          let res = mid.match(commands[key].end)[1]
+          commands[key].result.push(res)
+        }
+      }
+    }
+    console.log(this.props.dispatch)
+    if(commands.task.result.length !== 0){
+      for( let name of commands.task.result ){
+        let id = guid()
+        var a = this.props.addChild({title: name, description: '', parent, id})
+        console.log('thunk',a)
+        stringParse = stringParse.replace(`${commands.task.replace + name }"`, `[${name}](#${id})`)
+      }
+      return stringParse
+    }
+    else{
+      return stringParse
+    }
+
+   }
   save(){
     let id = guid()
-    if( this.props.todo.crud.type === 'create' && !this.props.todo.crud.id){
-      this.props.add({title: this.title.value, description: this.description.value, id})
+    let description = this.specialCommand(this.description.value, id)
+    const {type, id:currentId } = this.props.todo.crud
+    if( type === 'create' && !currentId){ //newTask
+      this.props.add({title: this.title.value, description, id})
     }
-    else if( this.props.todo.crud.type === 'create' && this.props.todo.crud.id){
-      this.props.addChild({title: this.title.value, description: this.description.value, parent: this.props.todo.crud.id, id})
+    else if( type === 'create' && currentId){ //newTask child
+      this.props.addChild({title: this.title.value, description, parent: currentId, id})
     }
-    else if( this.props.todo.crud.type === 'update' ){
+    else if( type === 'update' ){ //update
       id = this.props.todo.crud.id
-      this.props.update({title: this.title.value, description: this.description.value, id})
+      description = this.specialCommand(this.description.value, id)
+      this.props.update({title: this.title.value, description, id})
     }
     this.props.crud({state: 'read', id})
   }
@@ -36,7 +83,7 @@ class NewDescription extends React.Component {
       const task = nextProps.todo.tasks.filter( task => task.id === nextProps.todo.crud.id)[0]
       
       this.title.value = task.title
-      this.description.value = task.description
+        = task.description
     }
   }
   indetify(type){

@@ -1,8 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
+const prod = process.env.NODE_ENV === 'prod'
 
-module.exports = {
+let webpackConfig = {
   context: __dirname,
   entry: {
     task: './source/task',
@@ -14,6 +16,7 @@ module.exports = {
   },
   watch: true,
   resolve: {
+    moduleExtensions: ['.', './node_modules'],
     extensions: ['.js', '.jsx']
   },
   //devtool: 'eval',
@@ -21,22 +24,14 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: [/node_modules/],
+        exclude: /(node_modules)/,
         loader: "babel-loader",
         options: {
           presets: ['stage-2','es2015', 'react']
         }
       }
     ]
-  },/*
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        drop_console: false,
-      }
-    }),
-  ],*/
+  },
   devServer: {
     contentBase: [
       path.join(__dirname, "bower_components/"),
@@ -51,3 +46,14 @@ module.exports = {
     port: 9000
   }
 }
+
+if(prod){
+  webpackConfig = Object.assign(webpackConfig, {
+    watch: false,
+    plagin: [
+      new UglifyJSPlugin()
+    ]
+  })
+}
+
+module.exports = webpackConfig

@@ -1,17 +1,23 @@
-import {getAllChilds, getChilds} from '../tools';
+import {getAllChilds, getChilds, initLevel} from '../tools';
 
 const taskStore = (state, action) => {
   switch(action.type){
     case 'ADD':
-      var newTask = Object.assign({}, action.task, {parent:false, createDate: +new Date()})
+      var newTask = Object.assign(
+        {},
+        action.task,
+        {
+          parent:false,
+          createDate: +new Date(),
+          lvl:0
+        })
+
       state.tasks.push(newTask)
       
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
 
     case 'ADD_CHILD':
-      console.log(state.tasks, action.task)
-      
       var sibling = state.tasks.filter( task => task.parent === action.task.parent )
       
       var lastSiblingId = sibling.length
@@ -22,11 +28,18 @@ const taskStore = (state, action) => {
       ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
       : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
 
-      var newChildTask = Object.assign({}, action.task, {createDate: +new Date()})
+      var newChildTask = Object.assign(
+        {},
+        action.task,
+        {
+          createDate: +new Date(),
+          lvl:initLevel(state.tasks, action.task)
+        })
+
       state.tasks.splice(i, 0, newChildTask )
       
 
-      state.tasks = tasks.slice()
+      state.tasks = state.tasks.slice()
       return Object.assign({}, state)
     
     case 'UPDATE':

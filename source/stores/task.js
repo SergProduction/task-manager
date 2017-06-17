@@ -1,4 +1,5 @@
-import { createStore } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 
 import todoStore from '../reducers/task'
 import {guid, localStore} from '../tools'
@@ -7,10 +8,10 @@ const testData = localStore.get() || {
   tasks: [
     {
       title:'Hello!',
-      description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store',
+      description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store\n\n\n[markdawn help (rus)](http://paulradzkov.com/2014/markdown_cheatsheet/)\n\n[markdawn help (en)](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)',
       createDate: +new Date(),
       id: guid(),
-      parent: 0
+      parent: false
     }
   ],
   crud: {
@@ -19,10 +20,17 @@ const testData = localStore.get() || {
   }
 }
 
-const store = createStore(todoStore, testData, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__())
+const store = createStore(
+  todoStore,
+  testData,
+  compose(
+    applyMiddleware(thunk),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__()
+  )
+)
 
 store.subscribe(() => {
-  //localStore.save( store.getState() )
+  localStore.save( store.getState() )
   console.log('subscribe', store.getState())
 })
 

@@ -11770,7 +11770,7 @@ function compose() {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ActionTypes; });
 /* harmony export (immutable) */ __webpack_exports__["a"] = createStore;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable__ = __webpack_require__(285);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_symbol_observable__);
 
 
@@ -12028,9 +12028,9 @@ function createStore(reducer, preloadedState, enhancer) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(109);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__combineReducers__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__ = __webpack_require__(282);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__ = __webpack_require__(281);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__combineReducers__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__ = __webpack_require__(283);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__ = __webpack_require__(282);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__compose__ = __webpack_require__(108);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warning__ = __webpack_require__(111);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "createStore", function() { return __WEBPACK_IMPORTED_MODULE_0__createStore__["a"]; });
@@ -12167,6 +12167,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _redux = __webpack_require__(110);
 
+var _reduxThunk = __webpack_require__(281);
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
 var _task = __webpack_require__(121);
 
 var _task2 = _interopRequireDefault(_task);
@@ -12178,10 +12182,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var testData = _tools.localStore.get() || {
   tasks: [{
     title: 'Hello!',
-    description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store',
+    description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store\n\n\n[markdawn help (rus)](http://paulradzkov.com/2014/markdown_cheatsheet/)\n\n[markdawn help (en)](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)',
     createDate: +new Date(),
     id: (0, _tools.guid)(),
-    parent: 0
+    parent: false
   }],
   crud: {
     type: false,
@@ -12189,10 +12193,10 @@ var testData = _tools.localStore.get() || {
   }
 };
 
-var store = (0, _redux.createStore)(_task2.default, testData, window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__());
+var store = (0, _redux.createStore)(_task2.default, testData, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default), window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__()));
 
 store.subscribe(function () {
-  //localStore.save( store.getState() )
+  _tools.localStore.save(store.getState());
   console.log('subscribe', store.getState());
 });
 
@@ -12639,16 +12643,112 @@ var NewDescription = function (_React$Component) {
   }
 
   _createClass(NewDescription, [{
+    key: 'specialCommand',
+    value: function specialCommand(stringParse, parent) {
+      var testString = "#### hello? this is task 3 list children task - /task 'task 3.1' - /task 'task 3.2' /help 'help 3.2";
+
+      var commands = {
+        task: {
+          start: /\/task "([\w\s.,"]+)"/g,
+          end: /"([\w\s.,"]+)"/,
+          replace: '/task "',
+          middle: false,
+          result: []
+        },
+        help: {
+          start: /\/help/g,
+          end: /(\/help)/,
+          replace: '\/help',
+          middle: false,
+          result: []
+        }
+      };
+
+      for (var key in commands) {
+        commands[key].middle = stringParse.match(commands[key].start);
+        if (commands[key].middle) {
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = commands[key].middle[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var mid = _step.value;
+
+              var res = mid.match(commands[key].end)[1];
+              commands[key].result.push(res);
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+        }
+      }
+      console.log(this.props.dispatch);
+      if (commands.task.result.length !== 0) {
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = commands.task.result[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var name = _step2.value;
+
+            var id = (0, _tools.guid)();
+            var a = this.props.addChild({ title: name, description: '', parent: parent, id: id });
+            console.log('thunk', a);
+            stringParse = stringParse.replace(commands.task.replace + name + '"', '[' + name + '](#' + id + ')');
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+
+        return stringParse;
+      } else {
+        return stringParse;
+      }
+    }
+  }, {
     key: 'save',
     value: function save() {
       var id = (0, _tools.guid)();
-      if (this.props.todo.crud.type === 'create' && !this.props.todo.crud.id) {
-        this.props.add({ title: this.title.value, description: this.description.value, id: id });
-      } else if (this.props.todo.crud.type === 'create' && this.props.todo.crud.id) {
-        this.props.addChild({ title: this.title.value, description: this.description.value, parent: this.props.todo.crud.id, id: id });
-      } else if (this.props.todo.crud.type === 'update') {
+      var description = this.specialCommand(this.description.value, id);
+      var _props$todo$crud = this.props.todo.crud,
+          type = _props$todo$crud.type,
+          currentId = _props$todo$crud.id;
+
+      if (type === 'create' && !currentId) {
+        //newTask
+        this.props.add({ title: this.title.value, description: description, id: id });
+      } else if (type === 'create' && currentId) {
+        //newTask child
+        this.props.addChild({ title: this.title.value, description: description, parent: currentId, id: id });
+      } else if (type === 'update') {
+        //update
         id = this.props.todo.crud.id;
-        this.props.update({ title: this.title.value, description: this.description.value, id: id });
+        description = this.specialCommand(this.description.value, id);
+        this.props.update({ title: this.title.value, description: description, id: id });
       }
       this.props.crud({ state: 'read', id: id });
     }
@@ -12660,8 +12760,7 @@ var NewDescription = function (_React$Component) {
           return task.id === nextProps.todo.crud.id;
         })[0];
 
-        this.title.value = task.title;
-        this.description.value = task.description;
+        this.title.value = task.title = task.description;
       }
     }
   }, {
@@ -12802,7 +12901,7 @@ var styles = {
   }
 };
 
-var child = function child(lvl) {
+var expandLvl = function expandLvl(lvl) {
   return {
     borderLeftWidth: lvl ? '1px' : 0,
     marginLeft: 20 * lvl + 'px'
@@ -12831,6 +12930,7 @@ var TaskList = function (_React$Component) {
         return !task.parent;
       });
       var expand = {};
+
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -12861,9 +12961,13 @@ var TaskList = function (_React$Component) {
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      this.state.tasks = nextProps.tasks.map(function (task, i, tasks) {
-        return Object.assign(task, { lvl: (0, _tools.initLevel)(tasks, task) });
+      var tasksId = this.state.tasks.map(function (task) {
+        return task.id;
       });
+      var newTask = this.props.tasks.filter(function (task) {
+        return !task.parent && !tasksId.includes(task.id);
+      });
+      this.state.tasks = this.state.tasks.concat(newTask);
     }
   }, {
     key: 'expandClick',
@@ -12930,9 +13034,11 @@ var TaskList = function (_React$Component) {
     key: 'expandState',
     value: function expandState(task) {
       var childs = (0, _tools.getChilds)(this.props.tasks, task);
-      var state = childs.length ? this.state.expand[task.id] ? 'glyphicon-triangle-bottom ' : 'glyphicon-triangle-right ' : 'glyphicon-menu-right ';
-      //let state = this.state.expand[id] ? "glyphicon-minus " : "glyphicon-plus "
-      return "glyphicon " + state + this.props.classes.expand;
+      var state = this.state.expand[task.id] ? 'glyphicon-triangle-bottom ' : 'glyphicon-triangle-right ';
+
+      var stateClasses = childs.length ? state : 'glyphicon-menu-right ';
+
+      return 'glyphicon ' + stateClasses + ' ' + this.props.classes.expand;
     }
   }, {
     key: 'read',
@@ -12951,7 +13057,7 @@ var TaskList = function (_React$Component) {
       return this.state.tasks.map(function (task, i) {
         return _react2.default.createElement(
           'li',
-          { className: 'list-group-item', key: i, style: child(task.lvl) },
+          { className: 'list-group-item', key: i, style: expandLvl(task.lvl) },
           _react2.default.createElement('i', { className: _this5.expandState(task), onClick: _this5.expandClick(task) }),
           _react2.default.createElement(
             'a',
@@ -12985,7 +13091,7 @@ var TaskList = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = (0, _reactRedux.connect)(function (state) {
-  return { tasks: state.tasks };
+  return { tasks: state.tasks, rcrud: state.crud };
 }, function (dispatch) {
   return {
     crud: (0, _actions.CRUD)(dispatch),
@@ -13121,15 +13227,18 @@ var _tools = __webpack_require__(30);
 var taskStore = function taskStore(state, action) {
   switch (action.type) {
     case 'ADD':
-      var newTask = Object.assign({}, action.task, { parent: false, createDate: +new Date() });
+      var newTask = Object.assign({}, action.task, {
+        parent: false,
+        createDate: +new Date(),
+        lvl: 0
+      });
+
       state.tasks.push(newTask);
 
       state.tasks = state.tasks.slice();
       return Object.assign({}, state);
 
     case 'ADD_CHILD':
-      console.log(state.tasks, action.task);
-
       var sibling = state.tasks.filter(function (task) {
         return task.parent === action.task.parent;
       });
@@ -13142,10 +13251,14 @@ var taskStore = function taskStore(state, action) {
         return task.id == action.task.parent;
       }) + 1;
 
-      var newChildTask = Object.assign({}, action.task, { createDate: +new Date() });
+      var newChildTask = Object.assign({}, action.task, {
+        createDate: +new Date(),
+        lvl: (0, _tools.initLevel)(state.tasks, action.task)
+      });
+
       state.tasks.splice(i, 0, newChildTask);
 
-      state.tasks = tasks.slice();
+      state.tasks = state.tasks.slice();
       return Object.assign({}, state);
 
     case 'UPDATE':
@@ -17573,7 +17686,7 @@ function mk_block_toSource() {
 
 // node
 function mk_block_inspect() {
-  var util = __webpack_require__(289);
+  var util = __webpack_require__(290);
   return "Markdown.mk_block( " +
           util.inspect(this.toString()) +
           ", " +
@@ -31408,6 +31521,35 @@ module.exports = traverseAllChildren;
 
 /***/ }),
 /* 281 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+function createThunkMiddleware(extraArgument) {
+  return function (_ref) {
+    var dispatch = _ref.dispatch,
+        getState = _ref.getState;
+    return function (next) {
+      return function (action) {
+        if (typeof action === 'function') {
+          return action(dispatch, getState, extraArgument);
+        }
+
+        return next(action);
+      };
+    };
+  };
+}
+
+var thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+exports['default'] = thunk;
+
+/***/ }),
+/* 282 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31463,7 +31605,7 @@ function applyMiddleware() {
 }
 
 /***/ }),
-/* 282 */
+/* 283 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31517,7 +31659,7 @@ function bindActionCreators(actionCreators, dispatch) {
 }
 
 /***/ }),
-/* 283 */
+/* 284 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31657,14 +31799,14 @@ function combineReducers(reducers) {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
 
 /***/ }),
-/* 284 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(285);
+module.exports = __webpack_require__(286);
 
 
 /***/ }),
-/* 285 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31674,7 +31816,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ponyfill = __webpack_require__(286);
+var _ponyfill = __webpack_require__(287);
 
 var _ponyfill2 = _interopRequireDefault(_ponyfill);
 
@@ -31697,10 +31839,10 @@ if (typeof self !== 'undefined') {
 
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41), __webpack_require__(290)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41), __webpack_require__(291)(module)))
 
 /***/ }),
-/* 286 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31729,7 +31871,7 @@ function symbolObservablePonyfill(root) {
 };
 
 /***/ }),
-/* 287 */
+/* 288 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -31758,7 +31900,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 288 */
+/* 289 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -31769,7 +31911,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 289 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -32297,7 +32439,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(288);
+exports.isBuffer = __webpack_require__(289);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -32341,7 +32483,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(287);
+exports.inherits = __webpack_require__(288);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -32362,7 +32504,7 @@ function hasOwnProperty(obj, prop) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41), __webpack_require__(0)))
 
 /***/ }),
-/* 290 */
+/* 291 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
