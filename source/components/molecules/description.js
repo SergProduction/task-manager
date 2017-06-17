@@ -30,7 +30,9 @@ class Description extends React.Component {
     return html
   }
   searchTask(){
+    console.log('searchTask', this.props.todo.tasks)
     const task = this.props.todo.tasks.filter( task => task.id === this.props.todo.crud.id)[0]
+    console.log('searchTask', task)
     return(
       <div>
         <div>
@@ -70,8 +72,7 @@ class Description extends React.Component {
 }
 
 export default connect(
-  state => ({todo:state}),
-  dispatch => ({})
+  state => ({todo:state})
 )(
   injectSheet(styles)(Description)
 )

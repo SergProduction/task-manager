@@ -1,38 +1,28 @@
-const CRUD = dispatch => ({state, id}) => {
-  dispatch({
-    type: 'CRUD',
-    state: state,
-    id: id
-  })
-}
+const CRUD = ({state, id}) => ({
+  type: 'CRUD',
+  state: state,
+  id: id
+})
 
-const ADD = dispatch => ({title, description, id}) => {
-  dispatch({
-    type: 'ADD',
-    task: {title, description, id}
-  })
-}
+const ADD = ({title, description, id}) => ({
+  type: 'ADD',
+  task: {title, description, id}
+})
 
-const ADD_CHILD = dispatch => ({title, description, parent, id}) => {
-  dispatch({
-    type: 'ADD_CHILD',
-    task: {title, description, parent, id}
-  })
-}
+const ADD_CHILD = ({title, description, parent, id}) => ({
+  type: 'ADD_CHILD',
+  task: {title, description, parent, id}
+})
 
-const UPDATE = dispatch => ({title, description, id}) => {
-  dispatch({
-    type: 'UPDATE',
-    task: {title, description, id}
-  })
-}
+const UPDATE = ({title, description, id}) => ({
+  type: 'UPDATE',
+  task: {title, description, id}
+})
 
-const REMOVE = dispatch => id => {
-  dispatch({
-    type: 'REMOVE',
-    id: id
-  })
-}
+const REMOVE = id => ({
+  type: 'REMOVE',
+  id: id
+})
 
 
 

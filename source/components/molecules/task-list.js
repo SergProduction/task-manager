@@ -1,7 +1,7 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
-import {CRUD, REMOVE} from '../../actions'
+import {CRUD} from '../../actions'
 import {initLevel, getChilds, getAllChilds} from '../../tools'
 
 const styles = {
@@ -55,9 +55,15 @@ class TaskList extends React.Component {
     this.state = {tasks, expand}
   }
   componentWillReceiveProps(nextProps){
-    const tasksId = this.state.tasks.map( task => task.id)
-    const newTask = this.props.tasks.filter( task => !task.parent && !tasksId.includes(task.id) )
-    this.state.tasks = this.state.tasks.concat(newTask) 
+    console.log('update?')
+    const tasksIdState = this.state.tasks.map( task => task.id)
+    const tasksIdProps = nextProps.tasks.map( task => task.id)
+    
+    const tasks   = this.state.tasks.filter( task => tasksIdProps.includes(task.id) ) //remove old task
+    
+    const newTask = nextProps.tasks.filter( task => !task.parent && !tasksIdState.includes(task.id) ) //add task where parent == 0 && add task that is not present in state
+    
+    this.state.tasks = tasks.concat(newTask) 
   }
   expandClick(task){
     return this.state.expand[task.id]
@@ -120,7 +126,7 @@ class TaskList extends React.Component {
   }
   read(id) {
     return (e) => {
-      this.props.crud({state: 'read', id})
+      this.props.dispatch( CRUD({state: 'read', id}) )
     }
   }
   list(){
@@ -147,11 +153,7 @@ class TaskList extends React.Component {
 }
 
 export default connect(
-  state => ({tasks: state.tasks, rcrud: state.crud}),
-  dispatch => ({
-    crud: CRUD(dispatch),
-    remove: REMOVE(dispatch)
-  })
+  state => ({tasks: state.tasks, watch:state.crud.type })
 )(
   injectSheet(styles)(TaskList)
 )

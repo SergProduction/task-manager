@@ -1,6 +1,7 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
+import {CRUD} from '../../actions'
 import TaskList from './task-list'
 
 const styles = {
@@ -26,7 +27,7 @@ class WrapList extends React.Component {
   }
   add(){
     return (e) => {
-      this.props.crud({state: 'create', id: false})
+      this.props.dispatch( CRUD({state: 'create', id: false}) )
     }
   }
   render(){
@@ -45,16 +46,7 @@ class WrapList extends React.Component {
 }
 
 export default connect(
-  state => ({tasks: state.tasks}),
-  dispatch => ({
-    crud: ({state, id}) => {
-      dispatch({
-        type: 'CRUD',
-        state: state,
-        id: id
-      })
-    }
-  })
+  state => ({tasks: state.tasks})
 )(
   injectSheet(styles)(WrapList)
 )

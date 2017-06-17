@@ -53,13 +53,12 @@ const taskStore = (state, action) => {
       return Object.assign({}, state)
     
     case 'REMOVE':
-      console.log('REMOVE')
-      let task = state.tasks.filter(task => task.id === action.id)[0]
-      
+      let task = state.tasks.filter(task => task.id === action.id)[0]      
       let childs = getAllChilds(state.tasks, task).map(child => child.id)
       childs.push(action.id)
 
       state.tasks = state.tasks.filter(task => !childs.includes(task.id) )
+      state.tasks = state.tasks.slice()
       return Object.assign({}, state)
 
     case 'CRUD':

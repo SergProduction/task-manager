@@ -5255,65 +5255,51 @@ module.exports = g;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var CRUD = function CRUD(dispatch) {
-  return function (_ref) {
-    var state = _ref.state,
-        id = _ref.id;
-
-    dispatch({
-      type: 'CRUD',
-      state: state,
-      id: id
-    });
+var CRUD = function CRUD(_ref) {
+  var state = _ref.state,
+      id = _ref.id;
+  return {
+    type: 'CRUD',
+    state: state,
+    id: id
   };
 };
 
-var ADD = function ADD(dispatch) {
-  return function (_ref2) {
-    var title = _ref2.title,
-        description = _ref2.description,
-        id = _ref2.id;
-
-    dispatch({
-      type: 'ADD',
-      task: { title: title, description: description, id: id }
-    });
+var ADD = function ADD(_ref2) {
+  var title = _ref2.title,
+      description = _ref2.description,
+      id = _ref2.id;
+  return {
+    type: 'ADD',
+    task: { title: title, description: description, id: id }
   };
 };
 
-var ADD_CHILD = function ADD_CHILD(dispatch) {
-  return function (_ref3) {
-    var title = _ref3.title,
-        description = _ref3.description,
-        parent = _ref3.parent,
-        id = _ref3.id;
-
-    dispatch({
-      type: 'ADD_CHILD',
-      task: { title: title, description: description, parent: parent, id: id }
-    });
+var ADD_CHILD = function ADD_CHILD(_ref3) {
+  var title = _ref3.title,
+      description = _ref3.description,
+      parent = _ref3.parent,
+      id = _ref3.id;
+  return {
+    type: 'ADD_CHILD',
+    task: { title: title, description: description, parent: parent, id: id }
   };
 };
 
-var UPDATE = function UPDATE(dispatch) {
-  return function (_ref4) {
-    var title = _ref4.title,
-        description = _ref4.description,
-        id = _ref4.id;
-
-    dispatch({
-      type: 'UPDATE',
-      task: { title: title, description: description, id: id }
-    });
+var UPDATE = function UPDATE(_ref4) {
+  var title = _ref4.title,
+      description = _ref4.description,
+      id = _ref4.id;
+  return {
+    type: 'UPDATE',
+    task: { title: title, description: description, id: id }
   };
 };
 
-var REMOVE = function REMOVE(dispatch) {
-  return function (id) {
-    dispatch({
-      type: 'REMOVE',
-      id: id
-    });
+var REMOVE = function REMOVE(id) {
+  return {
+    type: 'REMOVE',
+    id: id
   };
 };
 
@@ -12150,8 +12136,6 @@ var Task = function Task(props) {
 
 exports.default = (0, _reactRedux.connect)(function (state) {
   return { watch: state.crud.type };
-}, function (dispatch) {
-  return {};
 })((0, _reactJss2.default)(styles)(Task));
 
 /***/ }),
@@ -12185,7 +12169,8 @@ var testData = _tools.localStore.get() || {
     description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store\n\n\n[markdawn help (rus)](http://paulradzkov.com/2014/markdown_cheatsheet/)\n\n[markdawn help (en)](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)',
     createDate: +new Date(),
     id: (0, _tools.guid)(),
-    parent: false
+    parent: false,
+    lvl: 0
   }],
   crud: {
     type: false,
@@ -12274,8 +12259,8 @@ var ControlButton = function (_React$Component) {
       var _this2 = this;
 
       return function (e) {
-        _this2.props.remove(id);
-        _this2.props.crud({ state: 'remove', id: id });
+        _this2.props.dispatch((0, _actions.REMOVE)(id));
+        _this2.props.dispatch((0, _actions.CRUD)({ state: 'remove', id: id }));
       };
     }
   }, {
@@ -12284,7 +12269,7 @@ var ControlButton = function (_React$Component) {
       var _this3 = this;
 
       return function (e) {
-        _this3.props.crud({ state: 'update', id: id });
+        _this3.props.dispatch((0, _actions.CRUD)({ state: 'update', id: id }));
       };
     }
   }, {
@@ -12293,7 +12278,7 @@ var ControlButton = function (_React$Component) {
       var _this4 = this;
 
       return function (e) {
-        _this4.props.crud({ state: 'create', id: id });
+        _this4.props.dispatch((0, _actions.CRUD)({ state: 'create', id: id }));
       };
     }
   }, {
@@ -12316,11 +12301,6 @@ var ControlButton = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(function (state) {
   return { id: state.crud.id };
-}, function (dispatch) {
-  return {
-    crud: (0, _actions.CRUD)(dispatch),
-    remove: (0, _actions.REMOVE)(dispatch)
-  };
 })((0, _reactJss2.default)(styles)(ControlButton));
 
 /***/ }),
@@ -12514,9 +12494,11 @@ var Description = function (_React$Component) {
     value: function searchTask() {
       var _this2 = this;
 
+      console.log('searchTask', this.props.todo.tasks);
       var task = this.props.todo.tasks.filter(function (task) {
         return task.id === _this2.props.todo.crud.id;
       })[0];
+      console.log('searchTask', task);
       return _react2.default.createElement(
         'div',
         null,
@@ -12584,8 +12566,6 @@ var Description = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(function (state) {
   return { todo: state };
-}, function (dispatch) {
-  return {};
 })((0, _reactJss2.default)(styles)(Description));
 
 /***/ }),
@@ -12645,6 +12625,8 @@ var NewDescription = function (_React$Component) {
   _createClass(NewDescription, [{
     key: 'specialCommand',
     value: function specialCommand(stringParse, parent) {
+      var _this2 = this;
+
       var testString = "#### hello? this is task 3 list children task - /task 'task 3.1' - /task 'task 3.2' /help 'help 3.2";
 
       var commands = {
@@ -12694,20 +12676,25 @@ var NewDescription = function (_React$Component) {
           }
         }
       }
-      console.log(this.props.dispatch);
+
       if (commands.task.result.length !== 0) {
         var _iteratorNormalCompletion2 = true;
         var _didIteratorError2 = false;
         var _iteratorError2 = undefined;
 
         try {
-          for (var _iterator2 = commands.task.result[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _loop = function _loop() {
             var name = _step2.value;
 
             var id = (0, _tools.guid)();
-            var a = this.props.addChild({ title: name, description: '', parent: parent, id: id });
-            console.log('thunk', a);
+            setTimeout(function () {
+              _this2.props.dispatch((0, _actions.ADD_CHILD)({ title: name, description: '', parent: parent, id: id }));
+            });
             stringParse = stringParse.replace(commands.task.replace + name + '"', '[' + name + '](#' + id + ')');
+          };
+
+          for (var _iterator2 = commands.task.result[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            _loop();
           }
         } catch (err) {
           _didIteratorError2 = true;
@@ -12740,17 +12727,17 @@ var NewDescription = function (_React$Component) {
 
       if (type === 'create' && !currentId) {
         //newTask
-        this.props.add({ title: this.title.value, description: description, id: id });
+        this.props.dispatch((0, _actions.ADD)({ title: this.title.value, description: description, id: id }));
       } else if (type === 'create' && currentId) {
         //newTask child
-        this.props.addChild({ title: this.title.value, description: description, parent: currentId, id: id });
+        this.props.dispatch((0, _actions.ADD_CHILD)({ title: this.title.value, description: description, parent: currentId, id: id }));
       } else if (type === 'update') {
         //update
         id = this.props.todo.crud.id;
         description = this.specialCommand(this.description.value, id);
-        this.props.update({ title: this.title.value, description: description, id: id });
+        this.props.dispatch((0, _actions.UPDATE)({ title: this.title.value, description: description, id: id }));
       }
-      this.props.crud({ state: 'read', id: id });
+      this.props.dispatch((0, _actions.CRUD)({ state: 'read', id: id }));
     }
   }, {
     key: 'componentWillReceiveProps',
@@ -12760,17 +12747,18 @@ var NewDescription = function (_React$Component) {
           return task.id === nextProps.todo.crud.id;
         })[0];
 
-        this.title.value = task.title = task.description;
+        this.title.value = task.title;
+        this.description.value = task.description;
       }
     }
   }, {
     key: 'indetify',
     value: function indetify(type) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.props.todo.crud.type === 'update') {
         var task = this.props.todo.tasks.filter(function (task) {
-          return task.id === _this2.props.todo.crud.id;
+          return task.id === _this3.props.todo.crud.id;
         })[0];
         if (type == 'title') return task.title;
         if (type == 'description') return task.description;
@@ -12779,7 +12767,7 @@ var NewDescription = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       return _react2.default.createElement(
         'div',
@@ -12796,7 +12784,7 @@ var NewDescription = function (_React$Component) {
               'Title'
             ),
             _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: function ref(title) {
-                _this3.title = title;
+                _this4.title = title;
               }, defaultValue: this.indetify('title') })
           ),
           _react2.default.createElement(
@@ -12808,7 +12796,7 @@ var NewDescription = function (_React$Component) {
               'Description'
             ),
             _react2.default.createElement('textarea', { className: "form-control " + this.props.classes.textarea, rows: '5', ref: function ref(description) {
-                _this3.description = description;
+                _this4.description = description;
               }, defaultValue: this.indetify('description') })
           ),
           _react2.default.createElement(
@@ -12826,13 +12814,6 @@ var NewDescription = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(function (state) {
   return { todo: state };
-}, function (dispatch) {
-  return {
-    crud: (0, _actions.CRUD)(dispatch),
-    add: (0, _actions.ADD)(dispatch),
-    addChild: (0, _actions.ADD_CHILD)(dispatch),
-    update: (0, _actions.UPDATE)(dispatch)
-  };
 })((0, _reactJss2.default)(styles)(NewDescription));
 
 /***/ }),
@@ -12961,13 +12942,23 @@ var TaskList = function (_React$Component) {
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var tasksId = this.state.tasks.map(function (task) {
+      console.log('update?');
+      var tasksIdState = this.state.tasks.map(function (task) {
         return task.id;
       });
-      var newTask = this.props.tasks.filter(function (task) {
-        return !task.parent && !tasksId.includes(task.id);
+      var tasksIdProps = nextProps.tasks.map(function (task) {
+        return task.id;
       });
-      this.state.tasks = this.state.tasks.concat(newTask);
+
+      var tasks = this.state.tasks.filter(function (task) {
+        return tasksIdProps.includes(task.id);
+      } //remove old task
+
+      );var newTask = nextProps.tasks.filter(function (task) {
+        return !task.parent && !tasksIdState.includes(task.id);
+      } //add task where parent == 0 && add task that is not present in state
+
+      );this.state.tasks = tasks.concat(newTask);
     }
   }, {
     key: 'expandClick',
@@ -13046,7 +13037,7 @@ var TaskList = function (_React$Component) {
       var _this4 = this;
 
       return function (e) {
-        _this4.props.crud({ state: 'read', id: id });
+        _this4.props.dispatch((0, _actions.CRUD)({ state: 'read', id: id }));
       };
     }
   }, {
@@ -13091,12 +13082,7 @@ var TaskList = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = (0, _reactRedux.connect)(function (state) {
-  return { tasks: state.tasks, rcrud: state.crud };
-}, function (dispatch) {
-  return {
-    crud: (0, _actions.CRUD)(dispatch),
-    remove: (0, _actions.REMOVE)(dispatch)
-  };
+  return { tasks: state.tasks, watch: state.crud.type };
 })((0, _reactJss2.default)(styles)(TaskList));
 
 /***/ }),
@@ -13121,6 +13107,8 @@ var _reactJss = __webpack_require__(17);
 var _reactJss2 = _interopRequireDefault(_reactJss);
 
 var _reactRedux = __webpack_require__(15);
+
+var _actions = __webpack_require__(42);
 
 var _taskList = __webpack_require__(119);
 
@@ -13167,7 +13155,7 @@ var WrapList = function (_React$Component) {
       var _this2 = this;
 
       return function (e) {
-        _this2.props.crud({ state: 'create', id: false });
+        _this2.props.dispatch((0, _actions.CRUD)({ state: 'create', id: false }));
       };
     }
   }, {
@@ -13196,19 +13184,6 @@ var WrapList = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(function (state) {
   return { tasks: state.tasks };
-}, function (dispatch) {
-  return {
-    crud: function crud(_ref) {
-      var state = _ref.state,
-          id = _ref.id;
-
-      dispatch({
-        type: 'CRUD',
-        state: state,
-        id: id
-      });
-    }
-  };
 })((0, _reactJss2.default)(styles)(WrapList));
 
 /***/ }),
@@ -13272,11 +13247,9 @@ var taskStore = function taskStore(state, action) {
       return Object.assign({}, state);
 
     case 'REMOVE':
-      console.log('REMOVE');
       var task = state.tasks.filter(function (task) {
         return task.id === action.id;
       })[0];
-
       var childs = (0, _tools.getAllChilds)(state.tasks, task).map(function (child) {
         return child.id;
       });
@@ -13285,6 +13258,7 @@ var taskStore = function taskStore(state, action) {
       state.tasks = state.tasks.filter(function (task) {
         return !childs.includes(task.id);
       });
+      state.tasks = state.tasks.slice();
       return Object.assign({}, state);
 
     case 'CRUD':

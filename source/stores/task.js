@@ -11,7 +11,8 @@ const testData = localStore.get() || {
       description: '### features\n- Write markdown style\n- Сreate child tasks\n- Tasks are stored in the local browser store\n\n\n[markdawn help (rus)](http://paulradzkov.com/2014/markdown_cheatsheet/)\n\n[markdawn help (en)](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)',
       createDate: +new Date(),
       id: guid(),
-      parent: false
+      parent: false,
+      lvl:0
     }
   ],
   crud: {
