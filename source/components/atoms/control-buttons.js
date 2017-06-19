@@ -21,18 +21,18 @@ class ControlButton extends React.Component {
   }
   remove(id){
     return (e) => {
-      this.props.remove(id)
-      this.props.crud({state: 'remove', id})
+      this.props.dispatch( REMOVE(id) )
+      this.props.dispatch( CRUD({state: 'remove', id}) )
     }
   }
   update(id){
     return (e) => {
-      this.props.crud({state: 'update', id})
+      this.props.dispatch( CRUD({state: 'update', id}) )
     }
   }
   addChild(id){
     return (e) => {
-      this.props.crud({state: 'create', id})
+      this.props.dispatch( CRUD({state: 'create', id}) )
     }
   }
   render(){
@@ -48,11 +48,7 @@ class ControlButton extends React.Component {
 }
 
 export default connect(
-  state => ({id: state.crud.id}),
-  dispatch => ({
-    crud: CRUD(dispatch),
-    remove: REMOVE(dispatch)
-  })
+  state => ({id: state.crud.id})
 )(
   injectSheet(styles)(ControlButton)
 )

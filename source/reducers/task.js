@@ -21,12 +21,12 @@ const taskStore = (state, action) => {
       var sibling = state.tasks.filter( task => task.parent === action.task.parent )
       
       var lastSiblingId = sibling.length
-      ? sibling[ sibling.length - 1 ].id
-      : false
+        ? sibling[ sibling.length - 1 ].id
+        : false
 
       var i = lastSiblingId
-      ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
-      : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
+        ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
+        : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
 
       var newChildTask = Object.assign(
         {},
@@ -42,6 +42,29 @@ const taskStore = (state, action) => {
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
     
+    case 'ADD_CHILDS':
+      var sibling = state.tasks.filter( task => task.parent === action.parent )
+
+      var lastSiblingId = sibling.length
+        ? sibling[ sibling.length - 1 ].id
+        : false
+
+      var i = lastSiblingId
+        ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
+        : state.tasks.findIndex( task => task.id == action.parent ) + 1
+      
+      var parent = state.tasks.filter( task => task.id === action.parent )
+      
+      var lvl = parent.length
+        ? initLevel(state.tasks, parent[0]) + 1
+        : 1
+      
+      var childs = action.childs.map( task => Object.assign({}, task, {createDate: +new Date(), lvl}) )
+      
+      state.tasks.splice(i, 0, ...childs )
+
+      return Object.assign({}, state)
+    
     case 'UPDATE':
       state.tasks = state.tasks.map(task => {
         if(task.id === action.task.id){
@@ -53,13 +76,12 @@ const taskStore = (state, action) => {
       return Object.assign({}, state)
     
     case 'REMOVE':
-      console.log('REMOVE')
-      let task = state.tasks.filter(task => task.id === action.id)[0]
-      
+      let task = state.tasks.filter(task => task.id === action.id)[0]      
       let childs = getAllChilds(state.tasks, task).map(child => child.id)
       childs.push(action.id)
 
       state.tasks = state.tasks.filter(task => !childs.includes(task.id) )
+      state.tasks = state.tasks.slice()
       return Object.assign({}, state)
 
     case 'CRUD':

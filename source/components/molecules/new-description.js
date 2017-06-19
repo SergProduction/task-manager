@@ -2,8 +2,7 @@ import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 import {guid} from '../../tools'
-import {CRUD, ADD, ADD_CHILD, UPDATE} from '../../actions'
-
+import {CRUD, ADD, ADD_CHILD, ADD_CHILDS, UPDATE} from '../../actions'
 
 const styles = {
   textarea: {
@@ -46,14 +45,18 @@ class NewDescription extends React.Component {
         }
       }
     }
-    console.log(this.props.dispatch)
+
     if(commands.task.result.length !== 0){
+      let childs = []
       for( let name of commands.task.result ){
-        let id = guid()
-        var a = this.props.addChild({title: name, description: '', parent, id})
-        console.log('thunk',a)
+        let id = guid()        
+        childs.push({title: name, description: '', parent, id})
+
         stringParse = stringParse.replace(`${commands.task.replace + name }"`, `[${name}](#${id})`)
       }
+      this.props.dispatch(
+        ADD_CHILDS({parent, childs})
+      )
       return stringParse
     }
     else{
@@ -66,24 +69,32 @@ class NewDescription extends React.Component {
     let description = this.specialCommand(this.description.value, id)
     const {type, id:currentId } = this.props.todo.crud
     if( type === 'create' && !currentId){ //newTask
-      this.props.add({title: this.title.value, description, id})
+      this.props.dispatch(
+        ADD({title: this.title.value, description, id})
+        )
     }
     else if( type === 'create' && currentId){ //newTask child
-      this.props.addChild({title: this.title.value, description, parent: currentId, id})
+      this.props.dispatch(
+        ADD_CHILD({title: this.title.value, description, parent: currentId, id})
+      )
     }
     else if( type === 'update' ){ //update
       id = this.props.todo.crud.id
       description = this.specialCommand(this.description.value, id)
-      this.props.update({title: this.title.value, description, id})
+      this.props.dispatch(
+        UPDATE({title: this.title.value, description, id})
+      )
     }
-    this.props.crud({state: 'read', id})
+    this.props.dispatch(
+      CRUD({state: 'read', id})
+    )
   }
   componentWillReceiveProps(nextProps){
     if( nextProps.todo.crud.type === 'update' ){
       const task = nextProps.todo.tasks.filter( task => task.id === nextProps.todo.crud.id)[0]
       
       this.title.value = task.title
-        = task.description
+      this.description.value = task.description
     }
   }
   indetify(type){
@@ -115,13 +126,7 @@ class NewDescription extends React.Component {
 }
 
 export default connect(
-  state => ({todo: state}),
-  dispatch => ({
-    crud: CRUD(dispatch),
-    add: ADD(dispatch),
-    addChild: ADD_CHILD(dispatch),
-    update: UPDATE(dispatch)
-  })
+  state => ({todo: state})
 )(
   injectSheet(styles)(NewDescription)
 )

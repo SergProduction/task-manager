@@ -36,7 +36,6 @@ const Task = (props) => {
 
 export default connect(
   state => ({watch:state.crud.type}),
-  dispatch => ({})
 )(
   injectSheet(styles)(Task)
 )
