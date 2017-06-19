@@ -55,12 +55,10 @@ class TaskList extends React.Component {
     this.state = {tasks, expand}
   }
   componentWillReceiveProps(nextProps){
-    console.log('update?')
     const tasksIdState = this.state.tasks.map( task => task.id)
     const tasksIdProps = nextProps.tasks.map( task => task.id)
-    
+
     const tasks   = this.state.tasks.filter( task => tasksIdProps.includes(task.id) ) //remove old task
-    
     const newTask = nextProps.tasks.filter( task => !task.parent && !tasksIdState.includes(task.id) ) //add task where parent == 0 && add task that is not present in state
     
     this.state.tasks = tasks.concat(newTask) 

@@ -2,7 +2,7 @@ import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 import {guid} from '../../tools'
-import {CRUD, ADD, ADD_CHILD, UPDATE} from '../../actions'
+import {CRUD, ADD, ADD_CHILD, ADD_CHILDS, UPDATE} from '../../actions'
 
 const styles = {
   textarea: {
@@ -47,15 +47,16 @@ class NewDescription extends React.Component {
     }
 
     if(commands.task.result.length !== 0){
+      let childs = []
       for( let name of commands.task.result ){
-        let id = guid()
-        setTimeout(() => {
-          this.props.dispatch(
-            ADD_CHILD({title: name, description: '', parent, id})
-          )
-        })
+        let id = guid()        
+        childs.push({title: name, description: '', parent, id})
+
         stringParse = stringParse.replace(`${commands.task.replace + name }"`, `[${name}](#${id})`)
       }
+      this.props.dispatch(
+        ADD_CHILDS({parent, childs})
+      )
       return stringParse
     }
     else{

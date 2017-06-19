@@ -14,6 +14,12 @@ const ADD_CHILD = ({title, description, parent, id}) => ({
   task: {title, description, parent, id}
 })
 
+const ADD_CHILDS = ({childs, parent}) => ({
+  type: 'ADD_CHILDS',
+  childs,
+  parent
+})
+
 const UPDATE = ({title, description, id}) => ({
   type: 'UPDATE',
   task: {title, description, id}
@@ -26,4 +32,4 @@ const REMOVE = id => ({
 
 
 
-export {CRUD, ADD, ADD_CHILD, UPDATE, REMOVE}
+export {CRUD, ADD, ADD_CHILD, ADD_CHILDS, UPDATE, REMOVE}
