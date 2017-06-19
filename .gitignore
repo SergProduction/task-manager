@@ -1,6 +1,6 @@
 # task manager ignore lisl
 
-/public/js/*
+public/js/*
 
 # Created by https://www.gitignore.io/api/node,osx,windows,linux
 
