@@ -2,7 +2,8 @@ import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 import {guid} from '../../tools'
-import {CRUD, ADD, ADD_CHILD, ADD_CHILDS, UPDATE} from '../../actions'
+import {ADD, ADD_CHILD, ADD_CHILDS, UPDATE} from '../../actions'
+import {Link, Redirect} from 'react-router-dom'
 
 const styles = {
   textarea: {
@@ -67,39 +68,46 @@ class NewDescription extends React.Component {
   save(){
     let id = guid()
     let description = this.specialCommand(this.description.value, id)
-    const {type, id:currentId } = this.props.todo.crud
-    if( type === 'create' && !currentId){ //newTask
+    const method = this.props.match.url.match(/create|update/)[0]
+    const { id: currentId } = this.props.match.params
+
+    if( method === 'create' && !currentId){ //newTask
       this.props.dispatch(
         ADD({title: this.title.value, description, id})
         )
     }
-    else if( type === 'create' && currentId){ //newTask child
+    else if( method === 'create' && currentId){ //newTask child
       this.props.dispatch(
         ADD_CHILD({title: this.title.value, description, parent: currentId, id})
       )
     }
-    else if( type === 'update' ){ //update
-      id = this.props.todo.crud.id
+    else if( method === 'update' ){ //update
+      id = currentId
       description = this.specialCommand(this.description.value, id)
       this.props.dispatch(
         UPDATE({title: this.title.value, description, id})
       )
     }
-    this.props.dispatch(
-      CRUD({state: 'read', id})
-    )
+    
+    this.props.history.replace(`/read/${id}`)
   }
   componentWillReceiveProps(nextProps){
-    if( nextProps.todo.crud.type === 'update' ){
-      const task = nextProps.todo.tasks.filter( task => task.id === nextProps.todo.crud.id)[0]
+    const method = this.props.match.url.match(/create|update/)[0]
+
+    if( method === 'update' ){
+      const { id } = this.props.match.params
+      const task = nextProps.todo.tasks.filter( task => task.id === id)[0]
       
       this.title.value = task.title
       this.description.value = task.description
     }
   }
   indetify(type){
-    if( this.props.todo.crud.type === 'update' ){
-      const task = this.props.todo.tasks.filter( task => task.id === this.props.todo.crud.id)[0]
+    const method = this.props.match.url.match(/create|update/)[0]
+    
+    if( method === 'update' ){
+      const { id } = this.props.match.params      
+      const task = this.props.todo.tasks.filter( task => task.id === id)[0]
       if(type == 'title')
         return task.title
       if(type == 'description')

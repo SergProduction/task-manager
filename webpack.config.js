@@ -41,6 +41,11 @@ let webpackConfig = {
     publicPath: '/js/',
     watchContentBase: true,
     compress: true,
+    historyApiFallback:{
+      rewrites: [
+        { from: /./, to : '/index.html'}
+      ]
+    },
     port: 9000
   }
 }

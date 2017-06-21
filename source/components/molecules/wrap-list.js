@@ -1,6 +1,7 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
+import {Link} from 'react-router-dom'
 import {CRUD} from '../../actions'
 import TaskList from './task-list'
 
@@ -36,7 +37,9 @@ class WrapList extends React.Component {
         <div className="panel-heading">
           Task list
           <div className={this.props.classes.rightLabel}>
-            <i className="glyphicon glyphicon-plus" style={{color:'#080'}} onClick={this.add()}></i>
+            <Link to="/create">
+              <i className="glyphicon glyphicon-plus" style={{color:'#080'}}></i>
+            </Link>
           </div>
         </div>
         <TaskList/>

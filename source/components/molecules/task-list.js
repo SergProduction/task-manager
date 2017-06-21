@@ -3,6 +3,7 @@ import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
 import {CRUD} from '../../actions'
 import {initLevel, getChilds, getAllChilds} from '../../tools'
+import {Link} from 'react-router-dom'
 
 const styles = {
   rightLabel: {
@@ -40,7 +41,6 @@ class TaskList extends React.Component {
   constructor(props) {
     super(props);
     this.list = this.list.bind(this);
-    this.read = this.read.bind(this);
     this.expandState = this.expandState.bind(this);
     this.state = {tasks:[], expand: {}}
   }
@@ -122,17 +122,14 @@ class TaskList extends React.Component {
     
     return `glyphicon ${stateClasses} ${this.props.classes.expand}`
   }
-  read(id) {
-    return (e) => {
-      this.props.dispatch( CRUD({state: 'read', id}) )
-    }
-  }
   list(){
     return this.state.tasks.map( (task,i) => {
       return (
         <li className="list-group-item" key={i} style={expandLvl(task.lvl)}>
           <i className={this.expandState(task)} onClick={this.expandClick(task)}></i>
-          <a onClick={this.read(task.id)} className={this.props.classes.cursor}>{task.title}</a>
+          <Link to={`/read/${task.id}`} className={this.props.classes.cursor}>
+            {task.title}
+          </Link>
           <div className={this.props.classes.rightLabel}>
             
             <span className="label label-primary">Open</span>

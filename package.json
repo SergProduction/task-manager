@@ -8,9 +8,8 @@
     "serv": "webpack-dev-server",
     "bower": "bower",
     "compile": "webpack",
-    "nowatch": "NODE_ENV=prod webpack",
     "mini": "uglifyjs --compress --warn ./public/js/task.js -o ./public/js/task.min.js",
-    "prod": "npm run nowatch ; npm run mini"
+    "prod": "NODE_ENV=prod webpack ; npm run mini"
   },
   "author": "serg <ss0sergey@gmail.com>",
   "license": "ISC",

@@ -27,7 +27,7 @@ class ControlPanel extends React.Component{
   render(){
     return (
       <div className={"pull-right " + this.props.classes.inlineChilds}>
-        <ControlButton/>
+        <ControlButton id={this.props.id}/>
         <div className="dropdown">
           <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             state 

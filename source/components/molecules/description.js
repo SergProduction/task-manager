@@ -30,9 +30,8 @@ class Description extends React.Component {
     return html
   }
   searchTask(){
-    console.log('searchTask', this.props.todo.tasks)
-    const task = this.props.todo.tasks.filter( task => task.id === this.props.todo.crud.id)[0]
-    console.log('searchTask', task)
+    let {id} = this.props.match.params
+    const task = this.props.tasks.filter( task => task.id === id)[0]
     return(
       <div>
         <div>
@@ -57,7 +56,7 @@ class Description extends React.Component {
               Task control
             </div>
             <div className="col-md-6">
-              <ControlPanel id={this.props.todo.crud.id}/>
+              <ControlPanel id={this.props.match.params.id}/>
             </div>
           </div>
         </div>
@@ -72,7 +71,7 @@ class Description extends React.Component {
 }
 
 export default connect(
-  state => ({todo:state})
+  state => ({tasks:state.tasks})
 )(
   injectSheet(styles)(Description)
 )
