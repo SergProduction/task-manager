@@ -8,7 +8,9 @@
     "serv": "webpack-dev-server",
     "bower": "bower",
     "compile": "webpack",
-    "prod": "NODE_ENV=prod webpack"
+    "nowatch": "NODE_ENV=prod webpack",
+    "mini": "uglifyjs --compress --warn ./public/js/task.js -o ./public/js/task.min.js",
+    "prod": "npm run nowatch ; npm run mini"
   },
   "author": "serg <ss0sergey@gmail.com>",
   "license": "ISC",
@@ -32,7 +34,9 @@
     "babel-preset-stage-2": "^6.24.1",
     "bower": "^1.8.0",
     "date-template": "^1.0.4",
+    "uglify-es": "^3.0.18",
     "uglifyjs-webpack-plugin": "^0.4.3",
-    "webpack-dev-server": "^2.4.5"
+    "webpack-dev-server": "^2.4.5",
+    "webpack-parallel-uglify-plugin": "^0.4.2"
   }
 }

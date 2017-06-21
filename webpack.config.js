@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+//const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+//const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 const prod = process.env.NODE_ENV === 'prod'
 
@@ -45,13 +46,8 @@ let webpackConfig = {
 }
 
 if(prod){
-  webpackConfig = Object.assign(webpackConfig, {
-    devServer: false,
-    watch: false,
-    plagin: [
-      new UglifyJSPlugin()
-    ]
-  })
+  delete webpackConfig.devServer
+  webpackConfig.watch = false
 }
 
 module.exports = webpackConfig
