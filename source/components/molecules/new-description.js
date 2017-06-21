@@ -65,7 +65,18 @@ class NewDescription extends React.Component {
     }
 
    }
+  validate(){
+    if(!this.title.value){
+      this.validTitle.className = 'form-group has-error has-feedback'
+      return false
+    }else{
+      this.validTitle.className = 'form-group'
+      return true      
+    }
+  }
   save(){
+    if( !this.validate() ) return false
+
     let id = guid()
     let description = this.specialCommand(this.description.value, id)
     const method = this.props.match.url.match(/create|update/)[0]
@@ -118,13 +129,13 @@ class NewDescription extends React.Component {
     return(
       <div className="panel panel-default">
         <div className="panel-body">
-          <div className="form-group">
+          <div className="form-group" ref={validTitle => this.validTitle = validTitle}>
             <label>Title</label>      
-            <input type="text" className="form-control" ref={ title => {this.title = title}} defaultValue={this.indetify('title')}/>
+            <input type="text" className="form-control" ref={ title => this.title = title} defaultValue={this.indetify('title')}/>
           </div>
           <div className="form-group">
             <label>Description</label>
-            <textarea className={"form-control "+this.props.classes.textarea} rows="5" ref={ description => {this.description = description}} defaultValue={this.indetify('description')}></textarea>
+            <textarea className={"form-control "+this.props.classes.textarea} rows="5" ref={ description => this.description = description} defaultValue={this.indetify('description')}></textarea>
           </div>
           <button className="btn btn-primary" onClick={this.save}>Save</button>
         </div>
