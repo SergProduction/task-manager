@@ -46,18 +46,4 @@ const Task = (props) => {
   )
 }
 
-/*
-            {
-              props.watch === 'read'
-              ? <Description/>
-              : props.watch === 'update' || props.watch === 'create'
-              ? <NewDescription/>
-              : null
-            }
-*/
-
-export default connect(
-  state => ({watch:state.crud.type}),
-)(
-  injectSheet(styles)(Task)
-)
+export default injectSheet(styles)(Task)

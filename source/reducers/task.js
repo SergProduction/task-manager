@@ -83,12 +83,6 @@ const taskStore = (state, action) => {
       state.tasks = state.tasks.filter(task => !childs.includes(task.id) )
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
-
-    case 'CRUD':
-      state.crud.type = action.state
-      state.crud.id = action.id ? action.id : false
-      
-      return Object.assign({}, state)
   }
   return state
 }

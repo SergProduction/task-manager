@@ -17,9 +17,7 @@ class NewDescription extends React.Component {
     this.save = this.save.bind(this)
     this.indetify = this.indetify.bind(this)
   }
-  specialCommand(stringParse, parent){
-    let testString = "#### hello? this is task 3 list children task - /task 'task 3.1' - /task 'task 3.2' /help 'help 3.2"
-    
+  specialCommand(stringParse, parent){    
     let commands = {
       task: {
         start: /\/task "([\w\s.,"]+)"/g,
@@ -64,7 +62,7 @@ class NewDescription extends React.Component {
       return stringParse
     }
 
-   }
+  }
   validate(){
     if(!this.title.value){
       this.validTitle.className = 'form-group has-error has-feedback'
@@ -135,7 +133,7 @@ class NewDescription extends React.Component {
           </div>
           <div className="form-group">
             <label>Description</label>
-            <textarea className={"form-control "+this.props.classes.textarea} rows="5" ref={ description => this.description = description} defaultValue={this.indetify('description')}></textarea>
+            <textarea className={`form-control ${this.props.classes.textarea}`} rows="5" ref={ description => this.description = description} defaultValue={this.indetify('description')}></textarea>
           </div>
           <button className="btn btn-primary" onClick={this.save}>Save</button>
         </div>

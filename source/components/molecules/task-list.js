@@ -1,7 +1,6 @@
 import React from 'react';
 import injectSheet from 'react-jss'
 import {connect} from 'react-redux'
-import {CRUD} from '../../actions'
 import {initLevel, getChilds, getAllChilds} from '../../tools'
 import {Link} from 'react-router-dom'
 
@@ -148,7 +147,7 @@ class TaskList extends React.Component {
 }
 
 export default connect(
-  state => ({tasks: state.tasks, watch:state.crud.type })
+  state => ({tasks: state.tasks})
 )(
   injectSheet(styles)(TaskList)
 )

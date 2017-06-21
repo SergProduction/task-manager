@@ -21,35 +21,18 @@ const styles = {
 }
 
 
-class WrapList extends React.Component {
-  constructor(props) {
-    super(props)
-    this.add  = this.add.bind(this)
-  }
-  add(){
-    return (e) => {
-      this.props.dispatch( CRUD({state: 'create', id: false}) )
-    }
-  }
-  render(){
-    return(
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          Task list
-          <div className={this.props.classes.rightLabel}>
-            <Link to="/create">
-              <i className="glyphicon glyphicon-plus" style={{color:'#080'}}></i>
-            </Link>
-          </div>
-        </div>
-        <TaskList/>
+const WrapList = (props) => (
+  <div className="panel panel-default">
+    <div className="panel-heading">
+      Task list
+      <div className={props.classes.rightLabel}>
+        <Link to="/create">
+          <i className="glyphicon glyphicon-plus" style={{color:'#080'}}></i>
+        </Link>
       </div>
-    )
-  }
-}
-
-export default connect(
-  state => ({tasks: state.tasks})
-)(
-  injectSheet(styles)(WrapList)
+    </div>
+    <TaskList/>
+  </div>
 )
+
+export default injectSheet(styles)(WrapList)

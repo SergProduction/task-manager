@@ -14,11 +14,7 @@ const testData = localStore.get() || {
       parent: false,
       lvl:0
     }
-  ],
-  crud: {
-    type: false,
-    id: false
-  }
+  ]
 }
 
 const store = createStore(
