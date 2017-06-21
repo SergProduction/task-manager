@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serv": "webpack-dev-server webpack.config.js",
+    "serv": "webpack-dev-server",
     "bower": "bower",
     "compile": "webpack",
     "prod": "NODE_ENV=prod webpack"

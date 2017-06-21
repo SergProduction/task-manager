@@ -37,11 +37,8 @@ let webpackConfig = {
       path.join(__dirname, "bower_components/"),
       path.join(__dirname, "public/")
     ],
+    publicPath: '/js/',
     watchContentBase: true,
-    hot: true,
-    watchOptions: {
-      poll: true
-    },
     compress: true,
     port: 9000
   }
@@ -49,6 +46,7 @@ let webpackConfig = {
 
 if(prod){
   webpackConfig = Object.assign(webpackConfig, {
+    devServer: false,
     watch: false,
     plagin: [
       new UglifyJSPlugin()
