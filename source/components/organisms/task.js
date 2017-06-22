@@ -1,12 +1,12 @@
-import React from 'react';
+import React from 'react'
 import injectSheet from 'react-jss'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Link,
-  Redirect
+  Redirect,
 } from 'react-router-dom'
 
 
@@ -16,15 +16,13 @@ import Description from '../molecules/description'
 import RemoveTask from '../molecules/remove-task'
 
 
-
 const styles = {
   container: {
-    padding: 50
-  }
+    padding: 50,
+  },
 }
 
-const Task = (props) => {
-  return(
+const Task = props => (
     <div className={props.classes.container}>
       <Router>
         <div className="row">
@@ -37,13 +35,12 @@ const Task = (props) => {
               <Route path="/create" exact component={NewDescription}/>
               <Route path="/create/:id" component={NewDescription} />
               <Route path="/update/:id" component={NewDescription}/>
-              <Route path="/delete/:id" component={RemoveTask}/>            
+              <Route path="/delete/:id" component={RemoveTask}/>
             </Switch>
           </div>
         </div>
       </Router>
     </div>
   )
-}
 
 export default injectSheet(styles)(Task)

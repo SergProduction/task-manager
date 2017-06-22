@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 import injectSheet from 'react-jss'
-import {connect} from 'react-redux'
-import {markdown} from 'markdown'
+import { connect } from 'react-redux'
+import { markdown } from 'markdown'
 
 import ControlPanel from '../atoms/control-panel'
 import dateTemplate from 'date-template'
@@ -9,30 +9,30 @@ import dateTemplate from 'date-template'
 
 const styles = {
   textarea: {
-    resize: 'vertical'
+    resize: 'vertical',
   },
   rightLabel: {
     float: 'right',
     '& > *': {
       marginLeft: 5,
-      cursor: 'pointer'
-    }
-  }
+      cursor: 'pointer',
+    },
+  },
 }
 
 class Description extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.searchTask = this.searchTask.bind(this)
   }
-  markdownToHtml(text){
-    let html = { __html: markdown.toHTML(text) }
+  markdownToHtml(text) {
+    const html = { __html: markdown.toHTML(text) }
     return html
   }
-  searchTask(){
-    let {id} = this.props.match.params
-    const task = this.props.tasks.filter( task => task.id === id)[0]
-    return(
+  searchTask() {
+    const { id } = this.props.match.params
+    const task = this.props.tasks.filter(task => task.id === id)[0]
+    return (
       <div>
         <div>
           <h2>{task.title}</h2>
@@ -47,8 +47,8 @@ class Description extends React.Component {
       </div>
     )
   }
-  render(){
-    return(
+  render() {
+    return (
       <div className="panel panel-default">
         <div className="panel-heading">
           <div className="row">
@@ -71,7 +71,7 @@ class Description extends React.Component {
 }
 
 export default connect(
-  state => ({tasks:state.tasks})
+  state => ({ tasks: state.tasks })
 )(
   injectSheet(styles)(Description)
 )

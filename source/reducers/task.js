@@ -1,86 +1,86 @@
-import {getAllChilds, getChilds, initLevel} from '../tools';
+import { getAllChilds, getChilds, initLevel } from '../tools'
 
 const taskStore = (state, action) => {
-  switch(action.type){
+  switch (action.type) {
     case 'ADD':
       var newTask = Object.assign(
         {},
         action.task,
         {
-          parent:false,
+          parent: false,
           createDate: +new Date(),
-          lvl:0
+          lvl: 0,
         })
 
       state.tasks.push(newTask)
-      
+
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
 
     case 'ADD_CHILD':
-      var sibling = state.tasks.filter( task => task.parent === action.task.parent )
-      
+      var sibling = state.tasks.filter(task => task.parent === action.task.parent)
+
       var lastSiblingId = sibling.length
-        ? sibling[ sibling.length - 1 ].id
+        ? sibling[sibling.length - 1].id
         : false
 
       var i = lastSiblingId
-        ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
-        : state.tasks.findIndex( task => task.id == action.task.parent ) + 1
+        ? state.tasks.findIndex(task => task.id == lastSiblingId) + 1
+        : state.tasks.findIndex(task => task.id == action.task.parent) + 1
 
       var newChildTask = Object.assign(
         {},
         action.task,
         {
           createDate: +new Date(),
-          lvl:initLevel(state.tasks, action.task)
+          lvl: initLevel(state.tasks, action.task),
         })
 
-      state.tasks.splice(i, 0, newChildTask )
-      
+      state.tasks.splice(i, 0, newChildTask)
+
 
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
-    
+
     case 'ADD_CHILDS':
-      var sibling = state.tasks.filter( task => task.parent === action.parent )
+      var sibling = state.tasks.filter(task => task.parent === action.parent)
 
       var lastSiblingId = sibling.length
-        ? sibling[ sibling.length - 1 ].id
+        ? sibling[sibling.length - 1].id
         : false
 
       var i = lastSiblingId
-        ? state.tasks.findIndex( task => task.id == lastSiblingId ) + 1
-        : state.tasks.findIndex( task => task.id == action.parent ) + 1
-      
-      var parent = state.tasks.filter( task => task.id === action.parent )
-      
+        ? state.tasks.findIndex(task => task.id == lastSiblingId) + 1
+        : state.tasks.findIndex(task => task.id == action.parent) + 1
+
+      var parent = state.tasks.filter(task => task.id === action.parent)
+
       var lvl = parent.length
         ? initLevel(state.tasks, parent[0]) + 1
         : 1
-      
-      var childs = action.childs.map( task => Object.assign({}, task, {createDate: +new Date(), lvl}) )
-      
-      state.tasks.splice(i, 0, ...childs )
+
+      var childs = action.childs.map(task => Object.assign({}, task, { createDate: +new Date(), lvl }))
+
+      state.tasks.splice(i, 0, ...childs)
 
       return Object.assign({}, state)
-    
+
     case 'UPDATE':
-      state.tasks = state.tasks.map(task => {
-        if(task.id === action.task.id){
+      state.tasks = state.tasks.map((task) => {
+        if (task.id === action.task.id) {
           task.title = action.task.title
           task.description = action.task.description
         }
         return task
       })
       return Object.assign({}, state)
-    
+
     case 'REMOVE':
-      let task = state.tasks.filter(task => task.id === action.id)[0]      
+      const task = state.tasks.filter(task => task.id === action.id)[0]
       let childs = getAllChilds(state.tasks, task).map(child => child.id)
       childs.push(action.id)
 
-      state.tasks = state.tasks.filter(task => !childs.includes(task.id) )
+      state.tasks = state.tasks.filter(task => !childs.includes(task.id))
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
   }

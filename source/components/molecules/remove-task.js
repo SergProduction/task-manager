@@ -1,17 +1,17 @@
-import React from 'react';
-import {connect} from 'react-redux'
-import {REMOVE} from '../../actions' 
+import React from 'react'
+import { connect } from 'react-redux'
+import { REMOVE } from '../../actions'
 
 class RemoveTask extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
   }
-  componentWillMount(){
-    const {id} = this.props.match.params
-    this.props.dispatch( REMOVE(id) )
+  componentWillMount() {
+    const { id } = this.props.match.params
+    this.props.dispatch(REMOVE(id))
     this.props.history.replace('/')
   }
-  render(){
+  render() {
     return null
   }
 }
