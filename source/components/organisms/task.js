@@ -1,14 +1,10 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { connect } from 'react-redux'
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Route,
   Switch,
-  Link,
-  Redirect,
 } from 'react-router-dom'
-
 
 import WrapList from '../molecules/wrap-list'
 import NewDescription from '../molecules/new-description'
@@ -24,7 +20,7 @@ const styles = {
 
 const Task = props => (
   <div className={props.classes.container}>
-    <Router>
+    <BrowserRouter>
       <div className="row">
         <div className="col-md-4">
           <WrapList />
@@ -39,7 +35,7 @@ const Task = props => (
           </Switch>
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   </div>
   )
 

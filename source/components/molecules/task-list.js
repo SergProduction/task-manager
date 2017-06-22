@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { Component } from 'react'
 import injectSheet from 'react-jss'
 import { connect } from 'react-redux'
-import { initLevel, getChilds, getAllChilds } from '../../tools'
+import { compose } from 'redux'
 import { Link } from 'react-router-dom'
+
+import { initLevel, getChilds, getAllChilds } from '../../tools'
+
 
 const styles = {
   rightLabel: {
@@ -29,29 +32,31 @@ const styles = {
   },
 }
 
+const enhance = compose(
+  connect(state => ({ tasks: state.tasks })),
+  injectSheet(styles)
+)
+
 const expandLvl = lvl => ({
   borderLeftWidth: lvl ? '1px' : 0,
   marginLeft: `${20 * lvl}px`,
 })
 
 
-class TaskList extends React.Component {
-  constructor(props) {
-    super(props)
-    this.list = this.list.bind(this)
-    this.expandState = this.expandState.bind(this)
-    this.state = { tasks: [], expand: {} }
-  }
+class TaskList extends Component {
+  state = { tasks: [], expand: {} }
+
   componentWillMount() {
     const tasks = this.props.tasks.filter(task => !task.parent)
     const expand = {}
 
-    for (task of tasks) {
+    for (const task of tasks) {
       expand[task.id] = false
     }
 
     this.state = { tasks, expand }
   }
+
   componentWillReceiveProps(nextProps) {
     const tasksIdState = this.state.tasks.map(task => task.id)
     const tasksIdProps = nextProps.tasks.map(task => task.id)
@@ -61,13 +66,14 @@ class TaskList extends React.Component {
 
     this.state.tasks = tasks.concat(newTask)
   }
-  expandClick(task) {
-    return this.state.expand[task.id]
-    ? this.expandClose(task)
-    : this.expandOpen(task)
-  }
-  expandOpen(task) {
-    return (event) => {
+
+  expandClick = task =>
+    this.state.expand[task.id]
+      ? this.expandClose(task)
+      : this.expandOpen(task)
+
+  expandOpen = task =>
+    () => {
       this.setState((prevState, props) => {
         const { tasks } = props
         const childs = getChilds(tasks, task)
@@ -86,44 +92,44 @@ class TaskList extends React.Component {
         }
       })
     }
-  }
-  expandClose(task) {
-    return (event) => {
-      this.setState((prevState, props) => {
-        const { tasks } = prevState
-        const tasksChildsId = getAllChilds(tasks, task).map(task => task.id)
-        const tasksNotChilds = tasks.filter(task => !tasksChildsId.includes(task.id))
 
-        const { expand } = prevState
-        Object.keys(prevState.expand).forEach((id) => {
+  expandClose = task =>
+    () => {
+      this.setState(({ tasks, expand }) => {
+        const newExpand = expand
+        const tasksChildsId = getAllChilds(tasks, task).map(current => current.id)
+        const tasksNotChilds = tasks.filter(current => !tasksChildsId.includes(current.id))
+
+        Object.keys(expand).forEach((id) => {
           if (tasksChildsId.includes(id)) {
-            expand[id] = false
+            newExpand[id] = false
           }
         })
 
         return {
           tasks: tasksNotChilds,
-          expand: Object.assign(expand, { [task.id]: false }),
+          expand: Object.assign(newExpand, { [task.id]: false }),
         }
       })
     }
-  }
-  expandState(task) {
+
+  expandState = (task) => {
     const childs = getChilds(this.props.tasks, task)
     const state = this.state.expand[task.id]
-      ? 'glyphicon-triangle-bottom '
-      : 'glyphicon-triangle-right '
+      ? 'glyphicon-triangle-bottom'
+      : 'glyphicon-triangle-right'
 
     const stateClasses = childs.length
       ? state
-      : 'glyphicon-menu-right '
+      : 'glyphicon-menu-right'
 
-    return `glyphicon ${stateClasses} ${this.props.classes.expand}`
+    return ['glyphicon', stateClasses, this.props.classes.expand].join(' ')
   }
-  list() {
-    return this.state.tasks.map((task, i) => (
-      <li className="list-group-item" key={i} style={expandLvl(task.lvl)}>
-        <i className={this.expandState(task)} onClick={this.expandClick(task)} />
+
+  list = () =>
+    this.state.tasks.map((task, index) => (
+      <li className="list-group-item" key={index} style={expandLvl(task.lvl)}>
+        <i role="button" className={this.expandState(task)} onClick={this.expandClick(task)} />
         <Link to={`/read/${task.id}`} className={this.props.classes.cursor}>
           {task.title}
         </Link>
@@ -133,7 +139,7 @@ class TaskList extends React.Component {
         </div>
       </li>
       ))
-  }
+
   render() {
     return (
       <ul className="list-group">
@@ -143,8 +149,5 @@ class TaskList extends React.Component {
   }
 }
 
-export default connect(
-  state => ({ tasks: state.tasks })
-)(
-  injectSheet(styles)(TaskList)
-)
+export default enhance(TaskList)
+

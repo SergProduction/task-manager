@@ -1,8 +1,7 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { CRUD } from '../../actions'
+
 import TaskList from './task-list'
 
 const styles = {

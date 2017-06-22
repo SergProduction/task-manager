@@ -1,4 +1,5 @@
-const initLevel = (list, parent) => {
+
+export const initLevel = (list, parent) => {
   let lvl = 0
 
   const lvlParent = (child) => {
@@ -14,29 +15,27 @@ const initLevel = (list, parent) => {
   return lvlParent(parent)
 }
 
-const getChilds = (list, parent) => list.filter(child => child.parent == parent.id)
+export const getChilds = (list, parent) => list.filter(child => child.parent === parent.id)
 
-const getAllChilds = (list, parent) => {
-  const findChilds = parent =>
-    list.filter(child => child.parent === parent.id)
+export const getAllChilds = (list, parent) => {
+  let all = getChilds(list, parent)
 
-  const findAllChilds = (parent) => {
-    let all = findChilds(parent)
-    for (const child of all) {
-      const grands = findAllChilds(child)
-      all = all.concat(grands)
-    }
-    return all
+  for (const childId in all) {
+    const child = all[childId]
+    const grands = getAllChilds(child)
+    all = all.concat(grands)
   }
 
-  return findAllChilds(parent)
+  return all
 }
+
 /*
 const allChilds = (list, parentId) => list
   .filter(item => item.parent === parentId)
   .reduce((all, child) => [].concat(all, child, getAllChildren(list, child.id)), [])
 */
-const guid = () => {
+
+export const guid = () => {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
@@ -45,9 +44,8 @@ const guid = () => {
   return s4() + s4() + s4()
 }
 
-const localStore = {
+export const localStore = {
   save: value => window.localStorage.setItem('taskManager', JSON.stringify(value)),
   get: () => JSON.parse(window.localStorage.getItem('taskManager')),
 }
 
-export { initLevel, guid, localStore, getAllChilds, getChilds }

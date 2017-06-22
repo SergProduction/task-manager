@@ -1,9 +1,9 @@
-import { getAllChilds, getChilds, initLevel } from '../tools'
+import { getAllChilds, initLevel } from '../tools'
 
-const taskStore = (state, action) => {
+export default (state, action) => {
   switch (action.type) {
-    case 'ADD':
-      var newTask = Object.assign(
+    case 'ADD': {
+      const newTask = Object.assign(
         {},
         action.task,
         {
@@ -16,19 +16,20 @@ const taskStore = (state, action) => {
 
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
+    }
 
-    case 'ADD_CHILD':
-      var sibling = state.tasks.filter(task => task.parent === action.task.parent)
+    case 'ADD_CHILD': {
+      const sibling = state.tasks.filter(task => task.parent === action.task.parent)
 
-      var lastSiblingId = sibling.length
+      const lastSiblingId = sibling.length
         ? sibling[sibling.length - 1].id
         : false
 
-      var i = lastSiblingId
+      const i = lastSiblingId
         ? state.tasks.findIndex(task => task.id == lastSiblingId) + 1
         : state.tasks.findIndex(task => task.id == action.task.parent) + 1
 
-      var newChildTask = Object.assign(
+      const newChildTask = Object.assign(
         {},
         action.task,
         {
@@ -41,49 +42,59 @@ const taskStore = (state, action) => {
 
       state.tasks = state.tasks.slice()
       return Object.assign({}, state)
+    }
 
-    case 'ADD_CHILDS':
-      var sibling = state.tasks.filter(task => task.parent === action.parent)
+    case 'ADD_CHILDS': {
+      const tasks = state.tasks
+      const sibling = tasks.filter(task => task.parent === action.parent)
 
-      var lastSiblingId = sibling.length
+      const lastSiblingId = sibling.length
         ? sibling[sibling.length - 1].id
         : false
 
-      var i = lastSiblingId
-        ? state.tasks.findIndex(task => task.id == lastSiblingId) + 1
-        : state.tasks.findIndex(task => task.id == action.parent) + 1
+      const index = lastSiblingId
+        ? tasks.findIndex(task => task.id === lastSiblingId) + 1
+        : tasks.findIndex(task => task.id === action.parent) + 1
 
-      var parent = state.tasks.filter(task => task.id === action.parent)
+      const parent = tasks.filter(task => task.id === action.parent)
 
-      var lvl = parent.length
-        ? initLevel(state.tasks, parent[0]) + 1
+      const lvl = parent.length
+        ? initLevel(tasks, parent[0]) + 1
         : 1
 
-      var childs = action.childs.map(task => Object.assign({}, task, { createDate: +new Date(), lvl }))
+      const childs = action.childs
+        .map(task => Object.assign({}, task, { createDate: Number(new Date()), lvl }))
 
-      state.tasks.splice(i, 0, ...childs)
+      tasks.splice(index, 0, ...childs)
 
       return Object.assign({}, state)
+    }
 
-    case 'UPDATE':
-      state.tasks = state.tasks.map((task) => {
+    case 'UPDATE': {
+      const newTasks = state.tasks.map((task) => {
         if (task.id === action.task.id) {
-          task.title = action.task.title
-          task.description = action.task.description
+          return Object.assign({}, task, {
+            title: action.task.title,
+            description: action.task.description,
+          })
         }
         return task
       })
-      return Object.assign({}, state)
 
-    case 'REMOVE':
-      const task = state.tasks.filter(task => task.id === action.id)[0]
-      let childs = getAllChilds(state.tasks, task).map(child => child.id)
+      return Object.assign({}, state, { tasks: newTasks })
+    }
+
+    case 'REMOVE': {
+      const task = state.tasks.filter(current => current.id === action.id)[0]
+      const childs = getAllChilds(state.tasks, task).map(child => child.id)
       childs.push(action.id)
 
-      state.tasks = state.tasks.filter(task => !childs.includes(task.id))
-      state.tasks = state.tasks.slice()
-      return Object.assign({}, state)
+      const newTasks = state.tasks.filter(current => !childs.includes(current.id))
+
+      return Object.assign({}, state, { tasks: newTasks })
+    }
+
+    default:
+      return state
   }
-  return state
 }
-export default taskStore
