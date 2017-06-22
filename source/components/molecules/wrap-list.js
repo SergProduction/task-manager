@@ -27,11 +27,11 @@ const WrapList = props => (
       Task list
       <div className={props.classes.rightLabel}>
         <Link to="/create">
-          <i className="glyphicon glyphicon-plus" style={{ color: '#080' }}></i>
+          <i className="glyphicon glyphicon-plus" style={{ color: '#080' }} />
         </Link>
       </div>
     </div>
-    <TaskList/>
+    <TaskList />
   </div>
 )
 

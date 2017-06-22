@@ -7,8 +7,9 @@ import Task from './components/organisms/task'
 
 render(
   (
-  <Provider store={store}>
-    <Task/>
-  </Provider>
+    <Provider store={store}>
+      <Task />
+    </Provider>
   ),
-  document.getElementById('root'))
+  document.getElementById('root')
+)

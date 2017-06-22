@@ -23,24 +23,24 @@ const styles = {
 }
 
 const Task = props => (
-    <div className={props.classes.container}>
-      <Router>
-        <div className="row">
-          <div className="col-md-4">
-            <WrapList/>
-          </div>
-          <div className="col-md-8">
-            <Switch>
-              <Route path="/read/:id" component={Description}/>
-              <Route path="/create" exact component={NewDescription}/>
-              <Route path="/create/:id" component={NewDescription} />
-              <Route path="/update/:id" component={NewDescription}/>
-              <Route path="/delete/:id" component={RemoveTask}/>
-            </Switch>
-          </div>
+  <div className={props.classes.container}>
+    <Router>
+      <div className="row">
+        <div className="col-md-4">
+          <WrapList />
         </div>
-      </Router>
-    </div>
+        <div className="col-md-8">
+          <Switch>
+            <Route path="/read/:id" component={Description} />
+            <Route path="/create" exact component={NewDescription} />
+            <Route path="/create/:id" component={NewDescription} />
+            <Route path="/update/:id" component={NewDescription} />
+            <Route path="/delete/:id" component={RemoveTask} />
+          </Switch>
+        </div>
+      </div>
+    </Router>
+  </div>
   )
 
 export default injectSheet(styles)(Task)

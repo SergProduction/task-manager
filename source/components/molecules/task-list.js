@@ -122,16 +122,16 @@ class TaskList extends React.Component {
   }
   list() {
     return this.state.tasks.map((task, i) => (
-        <li className="list-group-item" key={i} style={expandLvl(task.lvl)}>
-          <i className={this.expandState(task)} onClick={this.expandClick(task)}></i>
-          <Link to={`/read/${task.id}`} className={this.props.classes.cursor}>
-            {task.title}
-          </Link>
-          <div className={this.props.classes.rightLabel}>
+      <li className="list-group-item" key={i} style={expandLvl(task.lvl)}>
+        <i className={this.expandState(task)} onClick={this.expandClick(task)} />
+        <Link to={`/read/${task.id}`} className={this.props.classes.cursor}>
+          {task.title}
+        </Link>
+        <div className={this.props.classes.rightLabel}>
 
-            <span className="label label-primary">Open</span>
-          </div>
-        </li>
+          <span className="label label-primary">Open</span>
+        </div>
+      </li>
       ))
   }
   render() {

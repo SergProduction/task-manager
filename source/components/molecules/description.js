@@ -37,9 +37,9 @@ class Description extends React.Component {
         <div>
           <h2>{task.title}</h2>
         </div>
-        <hr/>
+        <hr />
         <div>
-          <div dangerouslySetInnerHTML={this.markdownToHtml(task.description)}></div>
+          <div dangerouslySetInnerHTML={this.markdownToHtml(task.description)} />
         </div>
         <div className="text-info text-right">
           {dateTemplate('~h~:~m~ ~D~.~M~.~Y~', task.createDate)}
@@ -56,7 +56,7 @@ class Description extends React.Component {
               Task control
             </div>
             <div className="col-md-6">
-              <ControlPanel id={this.props.match.params.id}/>
+              <ControlPanel id={this.props.match.params.id} />
             </div>
           </div>
         </div>

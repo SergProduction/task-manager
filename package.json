@@ -35,7 +35,7 @@
     "bower": "^1.8.0",
     "date-template": "^1.0.4",
     "eslint": "^3.19.0",
-    "eslint-config-atomix-base": "^2.0.0",
+    "eslint-config-atomix-react": "^1.0.0",
     "uglify-es": "^3.0.18",
     "uglifyjs-webpack-plugin": "^0.4.3",
     "webpack-dev-server": "^2.4.5",

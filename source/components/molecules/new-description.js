@@ -128,11 +128,11 @@ class NewDescription extends React.Component {
         <div className="panel-body">
           <div className="form-group" ref={validTitle => this.validTitle = validTitle}>
             <label>Title</label>
-            <input type="text" className="form-control" ref={ title => this.title = title} defaultValue={this.indetify('title')}/>
+            <input type="text" className="form-control" ref={title => this.title = title} defaultValue={this.indetify('title')} />
           </div>
           <div className="form-group">
             <label>Description</label>
-            <textarea className={`form-control ${this.props.classes.textarea}`} rows="5" ref={ description => this.description = description} defaultValue={this.indetify('description')}></textarea>
+            <textarea className={`form-control ${this.props.classes.textarea}`} rows="5" ref={description => this.description = description} defaultValue={this.indetify('description')} />
           </div>
           <button className="btn btn-primary" onClick={this.save}>Save</button>
         </div>
