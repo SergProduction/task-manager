@@ -1,45 +1,50 @@
-import React from 'react';
+import React, { Component } from 'react'
 import injectSheet from 'react-jss'
-import {connect} from 'react-redux'
-import {markdown} from 'markdown'
-
-import ControlPanel from '../atoms/control-panel'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { markdown } from 'markdown'
 import dateTemplate from 'date-template'
 
+import ControlPanel from '../atoms/control-panel'
+
+
+/* eslint-disable react/no-danger */
 
 const styles = {
   textarea: {
-    resize: 'vertical'
+    resize: 'vertical',
   },
   rightLabel: {
     float: 'right',
     '& > *': {
       marginLeft: 5,
-      cursor: 'pointer'
-    }
-  }
+      cursor: 'pointer',
+    },
+  },
 }
 
-class Description extends React.Component {
-  constructor(props){
-    super(props)
-    this.searchTask = this.searchTask.bind(this)
-  }
-  markdownToHtml(text){
-    let html = { __html: markdown.toHTML(text) }
-    return html
-  }
-  searchTask(){
-    let {id} = this.props.match.params
-    const task = this.props.tasks.filter( task => task.id === id)[0]
-    return(
+const markdownToHtml = text =>
+  ({ __html: markdown.toHTML(text) })
+
+const enhance = compose(
+  connect(({ tasks }) => ({ tasks })),
+  injectSheet(styles)
+)
+
+class Description extends Component {
+
+  searchTask = () => {
+    const { id } = this.props.match.params
+    const task = this.props.tasks.filter(current => current.id === id)[0]
+
+    return (
       <div>
         <div>
           <h2>{task.title}</h2>
         </div>
-        <hr/>
+        <hr />
         <div>
-          <div dangerouslySetInnerHTML={this.markdownToHtml(task.description)}></div>
+          <div dangerouslySetInnerHTML={markdownToHtml(task.description)} />
         </div>
         <div className="text-info text-right">
           {dateTemplate('~h~:~m~ ~D~.~M~.~Y~', task.createDate)}
@@ -47,8 +52,8 @@ class Description extends React.Component {
       </div>
     )
   }
-  render(){
-    return(
+  render() {
+    return (
       <div className="panel panel-default">
         <div className="panel-heading">
           <div className="row">
@@ -56,7 +61,7 @@ class Description extends React.Component {
               Task control
             </div>
             <div className="col-md-6">
-              <ControlPanel id={this.props.match.params.id}/>
+              <ControlPanel id={this.props.match.params.id} />
             </div>
           </div>
         </div>
@@ -70,8 +75,4 @@ class Description extends React.Component {
   }
 }
 
-export default connect(
-  state => ({tasks:state.tasks})
-)(
-  injectSheet(styles)(Description)
-)
+export default enhance(Description)
