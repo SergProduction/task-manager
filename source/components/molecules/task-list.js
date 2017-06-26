@@ -127,8 +127,8 @@ class TaskList extends Component {
   }
 
   list = () =>
-    this.state.tasks.map((task, index) => (
-      <li className="list-group-item" key={index} style={expandLvl(task.lvl)}>
+    this.state.tasks.map(task => (
+      <li className="list-group-item" key={task.id} style={expandLvl(task.lvl)}>
         <i role="button" className={this.expandState(task)} onClick={this.expandClick(task)} />
         <Link to={`/read/${task.id}`} className={this.props.classes.cursor}>
           {task.title}

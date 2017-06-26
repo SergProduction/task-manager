@@ -28,7 +28,8 @@ let webpackConfig = {
         exclude: /(node_modules)/,
         loader: "babel-loader",
         options: {
-          presets: ['stage-2','es2015', 'react']
+          presets: ['stage-2', 'stage-0', 'es2015', 'react'],
+          plugins: ['transform-class-properties']
         }
       }
     ]

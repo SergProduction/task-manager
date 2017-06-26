@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import injectSheet from 'react-jss'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { guid } from '../../tools'
 import { ADD, ADD_CHILD, ADD_CHILDS, UPDATE } from '../../actions'
@@ -46,22 +46,22 @@ const specialCommand = (stringParse, parent) => {
       }
     }
   }
-
+  let replaceString = ''
   if (commands.task.result.length !== 0) {
     const childs = []
     for (const name of commands.task.result) {
       const id = guid()
       childs.push({ title: name, description: '', parent, id })
 
-      stringParse = stringParse.replace(`${commands.task.replace + name}"`, `[${name}](#${id})`)
+      replaceString = stringParse.replace(`${commands.task.replace + name}"`, `[${name}](#${id})`)
     }
     this.props.dispatch(
       ADD_CHILDS({ parent, childs })
     )
-    return stringParse
+    return replaceString
   }
 
-  return stringParse
+  return replaceString
 }
 
 class NewDescription extends Component {
