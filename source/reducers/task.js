@@ -14,8 +14,8 @@ export default (state, action) => {
 
       state.tasks.push(newTask)
 
-      state.tasks = state.tasks.slice()
-      return Object.assign({}, state)
+      // state.tasks = state.tasks.slice()
+      return Object.assign({}, state, { tasks: [...state.tasks] })
     }
 
     case 'ADD_CHILD': {
@@ -26,8 +26,8 @@ export default (state, action) => {
         : false
 
       const i = lastSiblingId
-        ? state.tasks.findIndex(task => task.id == lastSiblingId) + 1
-        : state.tasks.findIndex(task => task.id == action.task.parent) + 1
+        ? state.tasks.findIndex(task => task.id === lastSiblingId) + 1
+        : state.tasks.findIndex(task => task.id === action.task.parent) + 1
 
       const newChildTask = Object.assign(
         {},
@@ -40,8 +40,8 @@ export default (state, action) => {
       state.tasks.splice(i, 0, newChildTask)
 
 
-      state.tasks = state.tasks.slice()
-      return Object.assign({}, state)
+      // state.tasks = state.tasks.slice()
+      return Object.assign({}, state, { tasks: [...state.tasks] })
     }
 
     case 'ADD_CHILDS': {
@@ -86,6 +86,7 @@ export default (state, action) => {
 
     case 'REMOVE': {
       const task = state.tasks.filter(current => current.id === action.id)[0]
+      console.log('REMOVE', task, state.tasks)
       const childs = getAllChilds(state.tasks, task).map(child => child.id)
       childs.push(action.id)
 

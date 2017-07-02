@@ -5,6 +5,8 @@ import todoStore from '../reducers/task'
 import { guid, localStore } from '../tools'
 import { description, title } from './defaults'
 
+const prod = process.env.NODE_ENV === 'production'
+
 const testData = localStore.get() || {
   tasks: [
     {
@@ -21,10 +23,12 @@ const testData = localStore.get() || {
 const store = createStore(
   todoStore,
   testData,
-  compose(
-    applyMiddleware(thunk),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__() // eslint-disable-line no-underscore-dangle, no-undef
-  )
+  prod
+    ? applyMiddleware(thunk)
+    : compose(
+        applyMiddleware(thunk),
+        window.__REDUX_DEVTOOLS_EXTENSION__ && __REDUX_DEVTOOLS_EXTENSION__() // eslint-disable-line
+      )
 )
 
 store.subscribe(() => {

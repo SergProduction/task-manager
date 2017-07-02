@@ -49,7 +49,7 @@ class TaskList extends Component {
   componentWillMount() {
     const tasks = this.props.tasks.filter(task => !task.parent)
     const expand = {}
-
+    // eslint-disable-next-line
     for (const task of tasks) {
       expand[task.id] = false
     }
@@ -62,7 +62,8 @@ class TaskList extends Component {
     const tasksIdProps = nextProps.tasks.map(task => task.id)
 
     const tasks = this.state.tasks.filter(task => tasksIdProps.includes(task.id)) // remove old task
-    const newTask = nextProps.tasks.filter(task => !task.parent && !tasksIdState.includes(task.id)) // add task where parent == 0 && add task that is not present in state
+    const newTask = nextProps.tasks.filter(task => !task.parent && !tasksIdState.includes(task.id))
+    // add task where parent == 0 && add task that is not present in state
 
     this.state.tasks = tasks.concat(newTask)
   }

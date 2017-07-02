@@ -5,15 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint source",
-    "serv": "webpack-dev-server",
+    "dev": "webpack-dev-server",
     "bower": "bower",
     "compile": "webpack",
-    "mini": "uglifyjs --compress --warn ./public/js/task.js -o ./public/js/task.min.js",
-    "prod": "NODE_ENV=prod webpack && npm run mini"
+    "prod": "NODE_ENV=prod webpack"
   },
   "author": "serg <ss0sergey@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "date-template": "^2.0.5",
     "markdown": "^0.5.0",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
@@ -36,11 +36,9 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "bower": "^1.8.0",
-    "date-template": "^1.0.4",
     "eslint": "^3.19.0",
     "eslint-config-atomix-react": "^1.0.0",
-    "uglify-es": "^3.0.18",
-    "uglifyjs-webpack-plugin": "^0.4.3",
+    "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack-dev-server": "^2.4.5",
     "webpack-parallel-uglify-plugin": "^0.4.2"
   }

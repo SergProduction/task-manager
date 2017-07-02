@@ -15,7 +15,7 @@ const styles = {
 }
 
 const enhance = compose(
-  state => ({ todo: state }),
+  connect(state => ({ task: state.task })),
   injectSheet(styles)
 )
 
@@ -30,32 +30,35 @@ const commands = {
   help: {
     start: /\/help/g,
     end: /(\/help)/,
-    replace: '\/help',
+    replace: '/help',
     middle: false,
     result: [],
   },
 }
 
-const specialCommand = (stringParse, parent) => {
+const specialCommand = (dispatch, stringParse, parent) => {
+  // eslint-disable-next-line
   for (const key in commands) {
     commands[key].middle = stringParse.match(commands[key].start)
     if (commands[key].middle) {
+      // eslint-disable-next-line 
       for (const mid of commands[key].middle) {
         const res = mid.match(commands[key].end)[1]
         commands[key].result.push(res)
       }
     }
   }
-  let replaceString = ''
+  let replaceString = stringParse
   if (commands.task.result.length !== 0) {
     const childs = []
+    // eslint-disable-next-line 
     for (const name of commands.task.result) {
       const id = guid()
       childs.push({ title: name, description: '', parent, id })
-
-      replaceString = stringParse.replace(`${commands.task.replace + name}"`, `[${name}](#${id})`)
+      console.log('replaceString', replaceString)
+      replaceString = replaceString.replace(`${commands.task.replace + name}"`, `[${name}](#/taskmanager/read/${id})`)
     }
-    this.props.dispatch(
+    dispatch(
       ADD_CHILDS({ parent, childs })
     )
     return replaceString
@@ -71,7 +74,7 @@ class NewDescription extends Component {
 
     if (method === 'update') {
       const { id } = this.props.match.params
-      const task = nextProps.todo.tasks.filter(task => task.id === id)[0]
+      const task = nextProps.tasks.filter(task_ => task_.id === id)[0]
 
       this.title.value = task.title
       this.description.value = task.description
@@ -91,7 +94,7 @@ class NewDescription extends Component {
     if (!this.validate()) return false
 
     let id = guid()
-    let description = specialCommand(this.description.value, id)
+    let description = specialCommand(this.props.dispatch, this.description.value, id)
     const method = this.props.match.url.match(/create|update/)[0]
     const { id: currentId } = this.props.match.params
 
@@ -107,12 +110,11 @@ class NewDescription extends Component {
     }
     else if (method === 'update') { // update
       id = currentId
-      description = specialCommand(this.description.value, id)
+      description = specialCommand(this.props.dispatch, this.description.value, id)
       this.props.dispatch(
         UPDATE({ title: this.title.value, description, id })
       )
     }
-
     this.props.history.replace(`/read/${id}`)
   }
 
@@ -121,7 +123,7 @@ class NewDescription extends Component {
 
     if (method === 'update') {
       const { id } = this.props.match.params
-      const task = this.props.todo.tasks.filter(current => current.id === id)[0]
+      const task = this.props.tasks.filter(current => current.id === id)[0]
 
       if (type === 'title') {
         return task.title

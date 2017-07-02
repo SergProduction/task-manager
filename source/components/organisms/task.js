@@ -1,7 +1,7 @@
 import React from 'react'
 import injectSheet from 'react-jss'
 import {
-  BrowserRouter,
+  HashRouter,
   Route,
   Switch,
 } from 'react-router-dom'
@@ -20,13 +20,13 @@ const styles = {
 
 const Task = props => (
   <div className={props.classes.container}>
-    <BrowserRouter>
+    <HashRouter basename="/taskmanager">
       <div className="row">
         <div className="col-md-4">
           <WrapList />
         </div>
         <div className="col-md-8">
-          <Switch>
+          <Switch path="/taskmanager">
             <Route path="/read/:id" component={Description} />
             <Route path="/create" exact component={NewDescription} />
             <Route path="/create/:id" component={NewDescription} />
@@ -35,7 +35,7 @@ const Task = props => (
           </Switch>
         </div>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   </div>
   )
 

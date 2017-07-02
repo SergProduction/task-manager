@@ -23,11 +23,11 @@ const styles = {
   },
 }
 
-const markdownToHtml = text =>
+const mdToHtml = text =>
   ({ __html: markdown.toHTML(text) })
 
 const enhance = compose(
-  connect(({ tasks }) => ({ tasks })),
+  connect(state => ({ tasks: state.tasks })),
   injectSheet(styles)
 )
 
@@ -44,10 +44,10 @@ class Description extends Component {
         </div>
         <hr />
         <div>
-          <div dangerouslySetInnerHTML={markdownToHtml(task.description)} />
+          <div dangerouslySetInnerHTML={mdToHtml(task.description)} />
         </div>
         <div className="text-info text-right">
-          {dateTemplate('~h~:~m~ ~D~.~M~.~Y~', task.createDate)}
+          {dateTemplate('%0h:%0m %D.%M.%Y', task.createDate)}
         </div>
       </div>
     )

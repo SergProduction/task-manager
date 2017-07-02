@@ -15,18 +15,25 @@ export const initLevel = (list, parent) => {
   return lvlParent(parent)
 }
 
-export const getChilds = (list, parent) => list.filter(child => child.parent === parent.id)
+const getChilds = (list, parent) => {
+  return list.filter(child => child.parent == parent.id)
+}
 
 export const getAllChilds = (list, parent) => {
-  let all = getChilds(list, parent)
 
-  for (const childId in all) {
-    const child = all[childId]
-    const grands = getAllChilds(child)
-    all = all.concat(grands)
+  const findChilds = (parent) =>
+    list.filter(child => child.parent === parent.id)
+
+  const findAllChilds = (parent) => {
+    let all = findChilds(parent)
+    for(let child of all){
+      const grands = findAllChilds(child)
+      all = all.concat(grands)
+    }
+    return all
   }
 
-  return all
+  return findAllChilds(parent)
 }
 
 /*
@@ -49,3 +56,4 @@ export const localStore = {
   get: () => JSON.parse(window.localStorage.getItem('taskManager')),
 }
 
+export { getChilds }

@@ -1,59 +1,68 @@
-const path = require('path');
-const webpack = require('webpack');
-//const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 //const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 const prod = process.env.NODE_ENV === 'prod'
 
-let webpackConfig = {
+const webpackConfig = {
   context: __dirname,
   entry: {
     task: './source/task',
   },
   output: {
-    path: __dirname + '/public/js',
+    path: path.join(__dirname, '/public/js'),
     filename: '[name].js',
-    library: '[name]'
+    library: '[name]',
   },
   watch: true,
   resolve: {
     moduleExtensions: ['.', './node_modules'],
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
   },
-  //devtool: 'eval',
+  devtool: 'eval',
   module: {
     rules: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules)/,
-        loader: "babel-loader",
+        loader: 'babel-loader',
         options: {
           presets: ['stage-2', 'stage-0', 'es2015', 'react'],
-          plugins: ['transform-class-properties']
-        }
-      }
-    ]
+          plugins: ['transform-class-properties'],
+        },
+      },
+    ],
   },
   devServer: {
     contentBase: [
-      path.join(__dirname, "bower_components/"),
-      path.join(__dirname, "public/")
+      path.join(__dirname, 'bower_components/'),
+      path.join(__dirname, 'public/'),
     ],
     publicPath: '/js/',
     watchContentBase: true,
     compress: true,
-    historyApiFallback:{
+    historyApiFallback: {
       rewrites: [
-        { from: /./, to : '/index.html'}
-      ]
+        { from: /./, to: '/index.html' },
+      ],
     },
-    port: 9000
-  }
+    port: 9000,
+  },
 }
 
-if(prod){
+if (prod) {
   delete webpackConfig.devServer
+  delete webpackConfig.devtool
   webpackConfig.watch = false
+  webpackConfig.plugins = [
+    new UglifyJSPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
+  ]
 }
 
 module.exports = webpackConfig
